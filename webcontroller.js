@@ -1,6 +1,7 @@
 const { response } = require('express');
 const model = require('./model');
 const jwt = require('jsonwebtoken');
+const jwt_decode = require('jwt-decode');
 
 ///////////////////////////////////////////////////////////////////////  RESTFUL START  ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,11 +29,9 @@ const webcontroller = {
 		try{
 			var new_login = await model.check_login(req, res);
 			if (new_login.length > 0) {
-				const { mail } = new_login[0].mail
-				const { user_id } = new_login[0].user_id
 				const token = jwt.sign({
-					mail: mail,
-					user_id : user_id,
+					mail: new_login[0].mail,
+					user_id : new_login[0].user_id,
 				}, 'secretKey', {
 					expiresIn: "3h",
 				})
@@ -52,7 +51,9 @@ const webcontroller = {
 	allPost : async function(req, res){
 		try {
 			if (true) {
-				var all_post = await model.post(req, res);
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var all_post = await model.post(req, res, decoded);
 				var returnValue = {'status': true, "values":all_post};
 				res.send(returnValue);			
 			} else {

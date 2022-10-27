@@ -206,8 +206,7 @@ const model = {
         return new_user.dataValues;
     },
 
-    async post (req,res, param) {	
-
+    async post (req,res, decoded) {	
         const all_post = await post.findAll({  
             raw: true,
             include: [
@@ -222,7 +221,7 @@ const model = {
                 {
                     model: vote,
                     attributes: ['vote_id'],
-                    where: {user_id : req.query.param},
+                    where: {user_id : decoded.user_id},
                     required: false
                 }
             ],
