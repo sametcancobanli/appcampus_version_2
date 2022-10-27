@@ -32,6 +32,7 @@ const webcontroller = require('./webcontroller');
 ///////////// restful start //////////////////
 app.post("/webservice/register", webcontroller.registerService);
 app.post("/webservice/login", webcontroller.loginService);
+app.post("/webservice/forumpage", checkJwt, webcontroller.forumPage);
 app.post("/webservice/allpost", checkJwt, webcontroller.allPost);
 app.post("/webservice/allcomment", checkJwt, webcontroller.allComment);
 app.post("/webservice/alllike", checkJwt, webcontroller.allLike);

@@ -206,6 +206,36 @@ const model = {
         return new_user.dataValues;
     },
 
+    async forum (req,res, decoded) {	
+        const forumPage = await post.findAll({  
+            raw: true,
+            include: [
+                {
+                    model : comment,
+                    attributes : ['user_id', 'c_text', 'comment_id',[Sequelize.fn('COUNT', Sequelize.col('comments.post_id')), 'num']]
+                },
+                {
+                    model : user,
+                    attributes : ['name', 'surname']
+                },
+                {
+                    model: vote,
+                    attributes: ['vote_id'],
+                    where: {user_id : decoded.user_id},
+                    required: false
+                }
+            ],
+            
+            group: ['post.post_id'],
+            
+            order: [
+                ['post_id', 'DESC'],
+            ],
+        });
+        
+        return forumPage;
+    },
+
     async post (req,res, decoded) {	
         const all_post = await post.findAll({  
             raw: true,

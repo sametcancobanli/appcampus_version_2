@@ -48,6 +48,25 @@ const webcontroller = {
 		}
 	},
 
+	forumPage : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var forumPage = await model.forum(req, res, decoded);
+				var returnValue = {'status': true, "values":forumPage};
+				res.send(returnValue);			
+			} else {
+				console.log("Post are not loading..");
+				throw 'Post are not loading..';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
 	allPost : async function(req, res){
 		try {
 			if (true) {
@@ -66,8 +85,6 @@ const webcontroller = {
 			res.send(returnValue);
 		}
 	},
-
-	// complete until here
 
 	allComment : async function(req, res){
 		try {
