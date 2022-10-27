@@ -33,23 +33,25 @@ const controller = {
 	forum : async function(req, res){
 		var all_post = await model.post(req, res);
 		console.log(all_post);
-		if (req.session.loggedin) {
+		if (true) {
 			var all_post = await model.post(req, res);
 			var all_like = await model.like(req, res);//1
 			var all_comment = await model.comment(req, res);
 			var category_1 = await model.count_post(req, res, "Yurtlar");
 			var category_2 = await model.count_post(req, res, "Ders Notları");
 			var category_3 = await model.count_post(req, res, "Genel");
-			res.render("forum_page", {
-				all_post : all_post,
-				all_like : all_like,//2
-				all_comment : all_comment,
-				name : req.session.name,
-				id : req.session.token,
-				category_1 : category_1,
-				category_2 : category_2,
-				category_3 : category_3
-			});
+			var returnValue = {'status': true, "values":all_post};
+			res.send(returnValue);	
+			// res.render("forum_page", {
+			// 	all_post : all_post,
+			// 	all_like : all_like,//2
+			// 	all_comment : all_comment,
+			// 	name : req.session.name,
+			// 	id : req.session.token,
+			// 	category_1 : category_1,
+			// 	category_2 : category_2,
+			// 	category_3 : category_3
+			// });
 		
 		} else {
 			res.redirect('/login');

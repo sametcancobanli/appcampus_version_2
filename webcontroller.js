@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 
 const webcontroller = {	
 
-	check_registerService : async function(req, res){
+	registerService : async function(req, res){
         try {
 			var new_register = await model.check_register(req, res);
 			if (new_register.user_id > 0) {
@@ -24,7 +24,7 @@ const webcontroller = {
 		}	
 	},
 
-	check_loginService : async function(req, res, next) {
+	loginService : async function(req, res, next) {
 		try{
 			var new_login = await model.check_login(req, res);
 			if (new_login.length > 0) {
@@ -49,7 +49,7 @@ const webcontroller = {
 		}
 	},
 
-	check_allPost : async function(req, res){
+	allPost : async function(req, res){
 		try {
 			if (true) {
 				var all_post = await model.post(req, res);
@@ -68,10 +68,9 @@ const webcontroller = {
 
 	// complete until here
 
-	check_allComment : async function(req, res){
+	allComment : async function(req, res){
 		try {
-			var new_login = await model.check_login(req, res);
-			if (new_login.length > 0) {
+			if (true) {
 				var all_comment = await model.comment(req, res);
 				var returnValue = {'status': true, "values":all_comment};
 				res.send(returnValue);			
@@ -86,10 +85,9 @@ const webcontroller = {
 		}
 	},
 
-	check_allLike : async function(req, res){
+	allLike : async function(req, res){
 		try {
-			var new_login = await model.check_login(req, res);
-			if (new_login.length > 0) {
+			if (true) {
 				var all_like = await model.like(req, res);
 				var returnValue = {'status': true, "values":all_like};
 				res.send(returnValue);			
@@ -104,17 +102,13 @@ const webcontroller = {
 		}
 	},
 
-	check_countCategory : async function(req, res){
+	countCategory : async function(req, res){
 		try {
-			var new_login = await model.check_login(req, res);
-			if (new_login.length > 0) {
+			if (true) {
 				var category_1 = await model.count_post(req, res, "Yurtlar");
 				var category_2 = await model.count_post(req, res, "Ders Notları");
 				var category_3 = await model.count_post(req, res, "Genel");
-				var returnValue = {'status': true, 
-							"value_1":{"Yurtlar":category_1},
-							"value_2":{"Ders Notları":category_2},
-							"value_3":{"Genel":category_3}};
+				var returnValue = {'status': true, "category":{"Yurtlar":category_1,"Ders Notları":category_2,"Genel":category_3}};
 				res.send(returnValue);			
 			} else {
 				console.log("User not loggedin.");
@@ -127,10 +121,9 @@ const webcontroller = {
 		}
 	},
 
-	check_postCategory : async function(req, res){
+	postCategory : async function(req, res){
 		try {
-			var new_login = await model.check_login(req, res);
-			if (new_login.length > 0) {
+			if (true) {
 				var postcategory = await model.post_category(req, res, req.body.query);
 				var returnValue = {'status': true, "values":postcategory};
 				res.send(returnValue);			
@@ -147,8 +140,7 @@ const webcontroller = {
 
 	check_likeCategory : async function(req, res){
 		try {
-			var new_login = await model.check_login(req, res);
-			if (new_login.length > 0) {
+			if (true) {
 				var likecategory = await model.like_category(req, res, req.body.query);
 				var returnValue = {'status': true, "values":likecategory};
 				res.send(returnValue);			
@@ -165,8 +157,7 @@ const webcontroller = {
 
 	check_searchPost : async function(req, res){
 		try {
-			var new_login = await model.check_login(req, res);
-			if (new_login.length > 0) {
+			if (true) {
 				var searchpost = await model.post_search(req, res, req.body.query);
 				var returnValue = {'status': true, "values":searchpost};
 				res.send(returnValue);			
@@ -183,8 +174,7 @@ const webcontroller = {
 
 	check_searchLike : async function(req, res){
 		try {
-			var new_login = await model.check_login(req, res);
-			if (new_login.length > 0) {
+			if (true) {
 				var searchlike = await model.like_search(req, res, req.body.query);
 				var returnValue = {'status': true, "values":searchlike};
 				res.send(returnValue);			

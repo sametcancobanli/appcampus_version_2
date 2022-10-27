@@ -123,7 +123,6 @@ const vote = db.define('vote', {
         type: Sequelize.INTEGER,
     }
 });
-
 user.sync().then(() => {
     console.log('vote table created');
 });
@@ -178,13 +177,13 @@ const model = {
     async check_login(req,res) {
 
         const new_login = await user.findAll({
+            raw: true,
             where: {
                 [Op.and]: [
                     { mail: req.body.mail },
                     { password: req.body.password }
                 ]
             },
-            raw: true,
         });
 
         return new_login;
@@ -204,7 +203,6 @@ const model = {
                 about: req.body.about,
         });
 
-        console.log(new_user instanceof user);
         return new_user.dataValues;
     },
 
@@ -212,25 +210,40 @@ const model = {
 
         const all_post = await post.findAll({  
             raw: true,
-
             include: [
                 {
                     model : comment,
                     attributes : [[Sequelize.fn('COUNT', Sequelize.col('comments.post_id')), 'comment']]
                 },
-
                 {
                     model : user,
-
+                    attributes : ['name', 'surname']
                 }
-        ],
+            ],
+            
             group: ['post.post_id'],
             
             order: [
                 ['post_id', 'DESC'],
             ],
-    });
+        });
+        
         return all_post;
+    },
+
+    async comment (req,res) {	
+
+        const all_comment = await comment.findAll({
+            raw: true,
+            include: [
+                {
+                    model : user,
+                    attributes : ['name', 'surname']
+                }
+            ],
+        });
+
+        return all_comment;
     },
 
     async like (req,res) {//3
@@ -359,16 +372,6 @@ const model = {
     });
 
         return all_like;
-    },
-
-    async comment (req,res) {	
-
-        const all_comment = await comment.findAll({
-            raw: true,
-            include: [user]
-        });
-
-        return all_comment;
     },
 
     async write_post (req,res) {	
