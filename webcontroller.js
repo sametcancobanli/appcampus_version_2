@@ -54,7 +54,7 @@ const webcontroller = {
 				const token = req.headers.authorization.split(" ")[1]
         		var decoded = jwt_decode(token);
 				var forumPage = await model.forum(req, res, decoded);
-				all_post.forEach(element => {
+				forumPage.forEach(element => {
 					element['fullName'] = element['user.name'] + ' ' + element['user.surname'];
 					delete element['user.name'];
 					delete element['user.surname'];

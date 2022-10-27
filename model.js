@@ -225,12 +225,6 @@ const model = {
                     required: false
                 }
             ],
-            include: [{
-                model: comment,
-                include: [{
-                  model: user
-                }]
-            }],
             
             group: ['post.post_id'],
             
