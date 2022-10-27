@@ -73,6 +73,14 @@ const webcontroller = {
 				const token = req.headers.authorization.split(" ")[1]
         		var decoded = jwt_decode(token);
 				var all_post = await model.post(req, res, decoded);
+				  
+				all_post.forEach(element => {
+					element['fullName'] = element['user.name'] + ' ' + element['user.surname'];
+					delete element['user.name'];
+					delete element['user.surname'];
+					
+					
+				});
 				var returnValue = {'status': true, "values":all_post};
 				res.send(returnValue);			
 			} else {
