@@ -206,18 +206,24 @@ const model = {
         return new_user.dataValues;
     },
 
-    async post (req,res) {	
+    async post (req,res, param) {	
 
         const all_post = await post.findAll({  
             raw: true,
             include: [
                 {
                     model : comment,
-                    attributes : [[Sequelize.fn('COUNT', Sequelize.col('comments.post_id')), 'comment']]
+                    attributes : [[Sequelize.fn('COUNT', Sequelize.col('comments.post_id')), 'num']]
                 },
                 {
                     model : user,
                     attributes : ['name', 'surname']
+                },
+                {
+                    model: vote,
+                    attributes: ['vote_id'],
+                    where: {user_id : req.query.param},
+                    required: false
                 }
             ],
             

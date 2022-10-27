@@ -24,17 +24,17 @@ const webcontroller = {
 		}	
 	},
 
-	loginService : async function(req, res, next) {
+	loginService : async function(req, res) {
 		try{
 			var new_login = await model.check_login(req, res);
 			if (new_login.length > 0) {
-				const { mail } = req.body.mail
-				const { password } = req.body.password
+				const { mail } = new_login[0].mail
+				const { user_id } = new_login[0].user_id
 				const token = jwt.sign({
 					mail: mail,
-					password: password,
+					user_id : user_id,
 				}, 'secretKey', {
-					expiresIn: "1h",
+					expiresIn: "3h",
 				})
 				var returnValue = {'status': true, "token":token};
 				res.send(returnValue);
