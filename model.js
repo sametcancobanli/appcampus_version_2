@@ -212,7 +212,7 @@ const model = {
             include: [
                 {
                     model : comment,
-                    attributes : ['user_id', 'c_text', 'comment_id',[Sequelize.fn('COUNT', Sequelize.col('comments.post_id')), 'num']]
+                    attributes : [[Sequelize.fn('COUNT', Sequelize.col('comments.post_id')), 'num']]
                 },
                 {
                     model : user,
@@ -225,6 +225,12 @@ const model = {
                     required: false
                 }
             ],
+            include: [{
+                model: comment,
+                include: [{
+                  model: user
+                }]
+            }],
             
             group: ['post.post_id'],
             
