@@ -3,6 +3,8 @@ SELECT * FROM uni_media.post;
 
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'penguen123';​
 
+SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+
 CREATE DATABASE IF NOT EXISTS `uni_media` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `uni_media`;
 
@@ -39,6 +41,7 @@ CREATE TABLE comment (
 CREATE TABLE vote (
     user_id INT NOT NULL,
     post_id INT NOT NULL,
+    vote_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(user_id),
     FOREIGN KEY (post_id) REFERENCES post(post_id)
 );
