@@ -1,6 +1,3 @@
-SELECT * FROM uni_media.user;
-SELECT * FROM uni_media.post;
-
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'penguen123';​
 
 SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
@@ -20,13 +17,19 @@ CREATE TABLE user (
     about VARCHAR(200)
 );
 
+CREATE TABLE category (
+    category_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    category_name VARCHAR(50) NOT NULL
+);
+
 CREATE TABLE post (
     user_id INT NOT NULL,
     post_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    category_id INT NOT NULL,
     p_text VARCHAR(140) NOT NULL,
-    p_area VARCHAR(50) NOT NULL,
     p_vote INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(user_id)
+    FOREIGN KEY (user_id) REFERENCES user(user_id),
+    FOREIGN KEY (category_id) REFERENCES category(category_id)
 );
 
 CREATE TABLE comment (

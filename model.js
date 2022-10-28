@@ -67,6 +67,19 @@ user.sync().then(() => {
     console.log('user table created');
 });
 
+const category = db.define('category', {
+    category_id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true
+    },
+    category_name: {
+        type: Sequelize.STRING(50)
+    }
+});
+category.sync().then(() => {
+    console.log('category table created');
+});
+
 const post = db.define('post', {
     post_id: {
         type: Sequelize.INTEGER,
@@ -78,15 +91,15 @@ const post = db.define('post', {
     p_text: {
         type: Sequelize.STRING(500)
     },
-    p_area: {
-        type: Sequelize.STRING(50)
+    category_id: {
+        type: Sequelize.INTEGER
     },
     p_vote: {
         type: Sequelize.INTEGER
     },
-    time: {
-        type: Sequelize.STRING(50),
-    },
+    // time: {
+    //     type: Sequelize.STRING(50),
+    // },
 });
 user.sync().then(() => {
     console.log('post table created');
@@ -172,6 +185,15 @@ vote.belongsTo(post, {
     onDelete: 'cascade',
     hooks:true })
 
+category.hasMany(post, {
+    foreignKey: 'category_id',
+    onDelete: 'cascade',
+    hooks:true })
+post.belongsTo(category, {
+    foreignKey: 'category_id',
+    onDelete: 'cascade',
+    hooks:true })
+
 const model = {
 
     async check_login(req,res) {
@@ -214,10 +236,11 @@ const model = {
                     model : user,
                     attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
                     include: [
-                        {   
+                        {  
                             model: vote,
                             where: {user_id : decoded.user_id},
                             attributes: [['vote_id','itsliked']],
+                            required : false
                         },
                     ],
                 },
