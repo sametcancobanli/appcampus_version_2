@@ -212,7 +212,7 @@ const model = {
             include: [
                 {
                     model : user,
-                    attributes : ['name', 'surname'],
+                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
                     include: [
                         {
                             model: vote,
@@ -229,7 +229,7 @@ const model = {
                     include: [
                         {
                             model: user,
-                            attributes : ['name', 'surname']
+                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
                         },
                     ],
                 },
@@ -240,7 +240,7 @@ const model = {
                     include: [
                         {
                             model: user,
-                            attributes : ['name', 'surname']
+                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
                         },
                     ],
                 },
