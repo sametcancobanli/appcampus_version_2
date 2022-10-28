@@ -54,13 +54,6 @@ const webcontroller = {
 				const token = req.headers.authorization.split(" ")[1]
         		var decoded = jwt_decode(token);
 				var forumPage = await model.forum(req, res, decoded);
-
-				forumPage.forEach(element => {
-					element.user.fullname = element.user.name + ' ' + element.user.surname;
-					// delete element.user.name;
-					// delete element.user.surname;
-				});
-
 				var returnValue = {'status': true, "values":forumPage};
 				res.send(returnValue);			
 			} else {

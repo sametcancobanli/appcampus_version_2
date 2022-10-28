@@ -214,11 +214,10 @@ const model = {
                     model : user,
                     attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
                     include: [
-                        {
+                        {   
                             model: vote,
                             where: {user_id : decoded.user_id},
-                            attributes: ['vote_id'],
-                            required: false
+                            attributes: [['vote_id','itsliked']],
                         },
                     ],
                 },
@@ -252,6 +251,7 @@ const model = {
                 ['post_id', 'DESC'],
             ],
         });
+
         return forumPage;
     },
 
@@ -319,6 +319,8 @@ const model = {
 
         return all_like;
     },
+
+
 // llllllllllllllllllllllllllllllllllllllllllll
     async post_category (req,res, param) {	
 
