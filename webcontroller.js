@@ -54,13 +54,13 @@ const webcontroller = {
 				const token = req.headers.authorization.split(" ")[1]
         		var decoded = jwt_decode(token);
 				var forumPage = await model.forum(req, res, decoded);
+
 				forumPage.forEach(element => {
-					element['fullName'] = element['user.name'] + ' ' + element['user.surname'];
-					delete element['user.name'];
-					delete element['user.surname'];
-					
-					
+					element.user.fullname = element.user.name + ' ' + element.user.surname;
+					// delete element.user.name;
+					// delete element.user.surname;
 				});
+
 				var returnValue = {'status': true, "values":forumPage};
 				res.send(returnValue);			
 			} else {
@@ -82,12 +82,13 @@ const webcontroller = {
 				var all_post = await model.post(req, res, decoded);
 				  
 				all_post.forEach(element => {
-					element['fullName'] = element['user.name'] + ' ' + element['user.surname'];
+					element.user.dataValues.name = element.user.dataValues.name + ' ' + element.user.dataValues.surname;
 					delete element['user.name'];
 					delete element['user.surname'];
 					
 					
 				});
+
 				var returnValue = {'status': true, "values":all_post};
 				res.send(returnValue);			
 			} else {

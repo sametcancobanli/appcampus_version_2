@@ -150,7 +150,7 @@ post.hasMany(comment, {
     onDelete: 'cascade',
     hooks:true })
 comment.belongsTo(post, {
-    foreignKey: 'user_id',
+    foreignKey: 'post_id',
     onDelete: 'cascade',
     hooks:true })
 
@@ -208,22 +208,30 @@ const model = {
 
     async forum (req,res, decoded) {	
         const forumPage = await post.findAll({  
-            raw: true,
+
             include: [
                 {
-                    model : comment,
-                    attributes : [[Sequelize.fn('COUNT', Sequelize.col('comments.post_id')), 'num']]
-                },
-                {
                     model : user,
-                    attributes : ['name', 'surname']
+                    attributes : ['name', 'surname'],
+                    include: [
+                        {
+                            model: vote,
+                            where: {user_id : decoded.user_id},
+                            attributes: ['vote_id'],
+                            required: false
+                        },
+                    ],
                 },
                 {
                     model: vote,
-                    attributes: ['vote_id'],
-                    where: {user_id : decoded.user_id},
-                    required: false
-                }
+                    separate: true,
+                    attributes: ['user_id', 'vote_id']
+                },
+                {
+                    model : comment,
+                    separate: true,
+                    attributes : ['user_id', 'c_text', 'comment_id']
+                },
             ],
             
             group: ['post.post_id'],
@@ -232,13 +240,11 @@ const model = {
                 ['post_id', 'DESC'],
             ],
         });
-        
         return forumPage;
     },
 
     async post (req,res, decoded) {	
         const all_post = await post.findAll({  
-            raw: true,
             include: [
                 {
                     model : comment,
