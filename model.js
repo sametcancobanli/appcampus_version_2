@@ -225,12 +225,24 @@ const model = {
                 {
                     model: vote,
                     separate: true,
-                    attributes: ['user_id', 'vote_id']
+                    attributes: ['user_id', 'vote_id'],
+                    include: [
+                        {
+                            model: user,
+                            attributes : ['name', 'surname']
+                        },
+                    ],
                 },
                 {
                     model : comment,
                     separate: true,
-                    attributes : ['user_id', 'c_text', 'comment_id']
+                    attributes : ['user_id', 'c_text', 'comment_id'],
+                    include: [
+                        {
+                            model: user,
+                            attributes : ['name', 'surname']
+                        },
+                    ],
                 },
             ],
             
