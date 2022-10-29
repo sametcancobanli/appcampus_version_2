@@ -23,8 +23,8 @@ CREATE TABLE category (
 );
 
 CREATE TABLE post (
+	post_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
-    post_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     category_id INT NOT NULL,
     p_text VARCHAR(140) NOT NULL,
     p_vote INT NOT NULL,
@@ -33,18 +33,18 @@ CREATE TABLE post (
 );
 
 CREATE TABLE comment (
+    comment_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
     post_id INT NOT NULL,
-    comment_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     c_text VARCHAR(140) NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(user_id),
     FOREIGN KEY (post_id) REFERENCES post(post_id)
 );
 
 CREATE TABLE vote (
+	vote_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
     post_id INT NOT NULL,
-    vote_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(user_id),
     FOREIGN KEY (post_id) REFERENCES post(post_id)
 );

@@ -33,18 +33,17 @@ const webcontroller = require('./webcontroller');
 app.post("/webservice/register", webcontroller.registerService);
 app.post("/webservice/login", webcontroller.loginService);
 app.post("/webservice/forumpage", checkJwt, webcontroller.forumPage);
+app.post("/webservice/forumcategory", checkJwt, webcontroller.forumCategory);
+app.post("/webservice/forumsearch", checkJwt, webcontroller.forumSearch);
+
+app.post("/webservice/likepost", checkJwt, webcontroller.likePost);
+
+/////////////////////////////////////////////
+
 app.post("/webservice/allpost", checkJwt, webcontroller.allPost);
 app.post("/webservice/allcomment", checkJwt, webcontroller.allComment);
 app.post("/webservice/alllike", checkJwt, webcontroller.allLike);
 app.post("/webservice/countcategory", checkJwt , webcontroller.countCategory);
-
-app.post("/webservice/postcategory", webcontroller.postCategory);
-app.post("/webservice/likecategory", webcontroller.check_likeCategory);
-
-app.post("/webservice/searchpost", webcontroller.check_searchPost);
-app.post("/webservice/searchlike", webcontroller.check_searchLike);
-app.post("/webservice/sa", controller.forum);
-/////////////////////////////////////////////
 
 ///////////// setting port /////////////
 app.listen(3000, function(){

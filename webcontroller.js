@@ -67,6 +67,84 @@ const webcontroller = {
 		}
 	},
 
+	forumCategory : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var forumPage_category = await model.forum_category(req, res, decoded);
+				var returnValue = {'status': true, "values":forumPage_category};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	forumSearch : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var forumPage_search = await model.forum_search(req, res, decoded);
+				var returnValue = {'status': true, "values":forumPage_search};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	forumSearch : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var forumPage_search = await model.forum_search(req, res, decoded);
+				var returnValue = {'status': true, "values":forumPage_search};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	likePost : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var likePost = await model.like_post(req, res, decoded);
+				var returnValue = {'status': true, "values":likePost};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	//////////////////////////////////////////
+
 	allPost : async function(req, res){
 		try {
 			if (true) {
@@ -136,74 +214,6 @@ const webcontroller = {
 				var category_2 = await model.count_post(req, res, "Ders Notları");
 				var category_3 = await model.count_post(req, res, "Genel");
 				var returnValue = {'status': true, "category":{"Yurtlar":category_1,"Ders Notları":category_2,"Genel":category_3}};
-				res.send(returnValue);			
-			} else {
-				console.log("User not loggedin.");
-				throw 'User not loggedin.';
-			}	
-		} catch (error) {
-			console.log(error);
-			var returnValue = {'status': false, "error": error};
-			res.send(returnValue);
-		}
-	},
-
-	postCategory : async function(req, res){
-		try {
-			if (true) {
-				var postcategory = await model.post_category(req, res, req.body.query);
-				var returnValue = {'status': true, "values":postcategory};
-				res.send(returnValue);			
-			} else {
-				console.log("User not loggedin.");
-				throw 'User not loggedin.';
-			}	
-		} catch (error) {
-			console.log(error);
-			var returnValue = {'status': false, "error": error};
-			res.send(returnValue);
-		}
-	},
-
-	check_likeCategory : async function(req, res){
-		try {
-			if (true) {
-				var likecategory = await model.like_category(req, res, req.body.query);
-				var returnValue = {'status': true, "values":likecategory};
-				res.send(returnValue);			
-			} else {
-				console.log("User not loggedin.");
-				throw 'User not loggedin.';
-			}	
-		} catch (error) {
-			console.log(error);
-			var returnValue = {'status': false, "error": error};
-			res.send(returnValue);
-		}
-	},
-
-	check_searchPost : async function(req, res){
-		try {
-			if (true) {
-				var searchpost = await model.post_search(req, res, req.body.query);
-				var returnValue = {'status': true, "values":searchpost};
-				res.send(returnValue);			
-			} else {
-				console.log("User not loggedin.");
-				throw 'User not loggedin.';
-			}	
-		} catch (error) {
-			console.log(error);
-			var returnValue = {'status': false, "error": error};
-			res.send(returnValue);
-		}
-	},
-
-	check_searchLike : async function(req, res){
-		try {
-			if (true) {
-				var searchlike = await model.like_search(req, res, req.body.query);
-				var returnValue = {'status': true, "values":searchlike};
 				res.send(returnValue);			
 			} else {
 				console.log("User not loggedin.");

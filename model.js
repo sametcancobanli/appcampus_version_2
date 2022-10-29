@@ -278,23 +278,102 @@ const model = {
         return forumPage;
     },
 
-    async post (req,res, decoded) {	
-        const all_post = await post.findAll({  
+    async forum_category (req,res, decoded) {	
+
+        const forumPage_category = await post.findAll({  
+                where: {
+                    category_id: req.query.category_id,
+                },
+                include: [
+                    {
+                        model : user,
+                        attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                        include: [
+                            {  
+                                model: vote,
+                                where: {user_id : decoded.user_id},
+                                attributes: [['vote_id','itsliked']],
+                                required : false
+                            },
+                        ],
+                    },
+                    {
+                        model: vote,
+                        separate: true,
+                        attributes: ['user_id', 'vote_id'],
+                        include: [
+                            {
+                                model: user,
+                                attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                            },
+                        ],
+                    },
+                    {
+                        model : comment,
+                        separate: true,
+                        attributes : ['user_id', 'c_text', 'comment_id'],
+                        include: [
+                            {
+                                model: user,
+                                attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                            },
+                        ],
+                    },
+                ],
+                
+                group: ['post.post_id'],
+                
+                order: [
+                    ['post_id', 'DESC'],
+                ],
+            });
+    
+            return forumPage_category;
+    },
+
+    async forum_search (req,res, decoded) {	
+
+        const forumPage_search = await post.findAll({  
+            where: {
+                p_text: {
+                    [Op.like]: '%' + req.query.query + '%'
+                }
+            },
             include: [
                 {
-                    model : comment,
-                    attributes : [[Sequelize.fn('COUNT', Sequelize.col('comments.post_id')), 'num']]
-                },
-                {
                     model : user,
-                    attributes : ['name', 'surname']
+                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                    include: [
+                        {  
+                            model: vote,
+                            where: {user_id : decoded.user_id},
+                            attributes: [['vote_id','itsliked']],
+                            required : false
+                        },
+                    ],
                 },
                 {
                     model: vote,
-                    attributes: ['vote_id'],
-                    where: {user_id : decoded.user_id},
-                    required: false
-                }
+                    separate: true,
+                    attributes: ['user_id', 'vote_id'],
+                    include: [
+                        {
+                            model: user,
+                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                        },
+                    ],
+                },
+                {
+                    model : comment,
+                    separate: true,
+                    attributes : ['user_id', 'c_text', 'comment_id'],
+                    include: [
+                        {
+                            model: user,
+                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                        },
+                    ],
+                },
             ],
             
             group: ['post.post_id'],
@@ -303,8 +382,50 @@ const model = {
                 ['post_id', 'DESC'],
             ],
         });
+
+        return forumPage_search;
+    },
+
+    async like_post (req,res, decoded) {	
+
+        const likePost = await vote.create({
+            user_id: decoded.user_id,
+            post_id: req.query.post_id,
+            raw: true,
+        });
+
+        return likePost;
+    },
+
+// lllllllllllllllllllllllllllllllllllllllllll
+
+    async post (req,res, decoded) {	
+    const all_post = await post.findAll({  
+        include: [
+            {
+                model : comment,
+                attributes : [[Sequelize.fn('COUNT', Sequelize.col('comments.post_id')), 'num']]
+            },
+            {
+                model : user,
+                attributes : ['name', 'surname']
+            },
+            {
+                model: vote,
+                attributes: ['vote_id'],
+                where: {user_id : decoded.user_id},
+                required: false
+            }
+        ],
         
-        return all_post;
+        group: ['post.post_id'],
+        
+        order: [
+            ['post_id', 'DESC'],
+        ],
+    });
+    
+    return all_post;
     },
 
     async comment (req,res) {	
@@ -327,115 +448,6 @@ const model = {
         const all_like = await post.findAll({
             raw: true,
 
-            include: [
-                {
-                    model : vote,
-                    attributes : [[Sequelize.fn('COUNT', Sequelize.col('votes.post_id')), 'like']]
-                },
-        ],
-            group: ['post.post_id'],
-
-            order: [
-                ['post_id', 'DESC'],
-            ],
-    });
-
-        return all_like;
-    },
-
-
-// llllllllllllllllllllllllllllllllllllllllllll
-    async post_category (req,res, param) {	
-
-        const all_post = await post.findAll({  
-                where: {
-                    p_area: param,
-                },
-                raw: true,
-                include: [
-                   
-                    {
-                        model : comment,
-                        attributes : [[Sequelize.fn('COUNT', Sequelize.col('comments.post_id')), 'comment']]
-                    },
-    
-                    {
-                        model : user,
-    
-                    }
-                ],
-                group: ['post.post_id'],
-                order: [
-                    ['post_id', 'DESC'],
-                ],
-        });
-
-        return all_post;
-    },
-
-    async like_category (req,res,param) {//3
-
-        const all_like = await post.findAll({
-            where: {
-                p_area: param
-            },
-            raw: true,
-            include: [
-                {
-                    model : vote,
-                    attributes : [[Sequelize.fn('COUNT', Sequelize.col('votes.post_id')), 'like']]
-                },
-        ],
-            group: ['post.post_id'],
-
-            order: [
-                ['post_id', 'DESC'],
-            ],
-    });
-
-        return all_like;
-    },
-    
-
-    async post_search (req,res, param) {	
-
-        const all_post = await post.findAll({
-            where: {
-                p_text: {
-                    [Op.like]: '%' + param + '%'
-                }
-            },
-            raw: true,
-            include: [
-                
-                {
-                    model : comment,
-                    attributes : [[Sequelize.fn('COUNT', Sequelize.col('comments.post_id')), 'comment']]
-                },
-
-                {
-                    model : user,
-
-                }
-            ],
-            group: ['post.post_id'],
-            order: [
-                ['post_id', 'DESC'],
-            ],
-    });
-
-        return all_post;
-    },
-
-    async like_search (req,res,param) {//3
-
-        const all_like = await post.findAll({
-            where: {
-                p_text: {
-                    [Op.like]: '%' + param + '%'
-                }
-            },
-            raw: true,
             include: [
                 {
                     model : vote,
@@ -477,17 +489,6 @@ const model = {
         });
 
         return like_post_check;
-    },
-
-    async like_post (req,res) {	
-
-        const like_post = await vote.create({
-            user_id: req.session.token,
-            post_id: req.body.post_id,
-            raw: true,
-        });
-
-        return like_post;
     },
     
     async dislike_post (req,res) {    //5
