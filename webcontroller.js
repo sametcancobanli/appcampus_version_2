@@ -143,6 +143,27 @@ const webcontroller = {
 		}
 	},
 
+	newPost : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var newPost = await model.new_post(req, res, decoded);
+				var returnValue = {'status': true, "values":newPost};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+
+
 	//////////////////////////////////////////
 
 	allPost : async function(req, res){
@@ -210,10 +231,8 @@ const webcontroller = {
 	countCategory : async function(req, res){
 		try {
 			if (true) {
-				var category_1 = await model.count_post(req, res, "Yurtlar");
-				var category_2 = await model.count_post(req, res, "Ders Notları");
-				var category_3 = await model.count_post(req, res, "Genel");
-				var returnValue = {'status': true, "category":{"Yurtlar":category_1,"Ders Notları":category_2,"Genel":category_3}};
+				var category_1 = await model.count_post(req, res);
+				var returnValue = {'status': true, "category":category_1};
 				res.send(returnValue);			
 			} else {
 				console.log("User not loggedin.");

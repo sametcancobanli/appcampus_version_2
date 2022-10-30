@@ -37,6 +37,7 @@ app.post("/webservice/forumcategory", checkJwt, webcontroller.forumCategory);
 app.post("/webservice/forumsearch", checkJwt, webcontroller.forumSearch);
 
 app.post("/webservice/likepost", checkJwt, webcontroller.likePost);
+app.post("/webservice/newpost", checkJwt, webcontroller.newPost);
 
 /////////////////////////////////////////////
 

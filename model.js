@@ -397,6 +397,20 @@ const model = {
         return likePost;
     },
 
+    async new_post (req,res,decoded) {	
+
+        const newPost = await post.create({
+            user_id: decoded.user_id,
+            p_text: req.query.p_text,
+            category_id: req.query.category_id,
+            p_vote: 0,
+            time : moment(new Date()).format('MMMM Do YYYY, h:mm:ss a'),
+            raw: true,
+        });
+
+        return newPost;
+    },
+
 // lllllllllllllllllllllllllllllllllllllllllll
 
     async post (req,res, decoded) {	
@@ -462,20 +476,6 @@ const model = {
     });
 
         return all_like;
-    },
-
-    async write_post (req,res) {	
-
-        const new_post = await post.create({
-            user_id: req.session.token,
-            p_text: req.body.p_text,
-            p_area: req.body.p_area,
-            p_vote: 0,
-            time : moment(new Date()).format('MMMM Do YYYY, h:mm:ss a'),
-            raw: true,
-        });
-
-        return new_post;
     },
 
     async like_post_check (req,res) {	
@@ -561,16 +561,18 @@ const model = {
         return all_post;
     },
 
-    async count_post (req, res, category) {	
+    async count_post (req, res) {	
 
         const num_post = await post.count({  
-                where: {
-                    p_area: category,
-                },
-                raw: true,
-                order: [
-                    ['post_id', 'DESC'],
+
+                include: [
+                    {
+                        model : category,
+                        attributes : ['category_name']
+                    },
                 ],
+
+                group: ['post.category_id'],
         });
 
         return num_post;

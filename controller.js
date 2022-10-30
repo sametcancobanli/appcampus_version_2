@@ -107,21 +107,6 @@ const controller = {
 		}
 	},
 
-	about : function(req, res){
-		if (req.session.loggedin) {
-			res.render("about_page", {
-				name : req.session.name,
-				id : req.session.token,});
-		} else {
-			res.redirect('/login');
-			res.end();
-		}
-	},
-
-	login : function(req, res){
-		res.render("login_page");
-	},
-
 	check_login : async function(req, res) {
 			await request.post('http://localhost:3000/webservice/login', {form:req.body},  function (error, response) {
 				if (!error && response.statusCode === 200) {
@@ -145,38 +130,6 @@ const controller = {
 			
 	},
 
-	register : function(req, res){
-		res.render("register_page");
-	},
-
-	check_register : async function(req, res){
-		/*console.log(req.body);
-		new_register = await model.check_register(req, res);
-			if (new_register.user_id > 0) {
-				console.log("Record inserted.");
-				res.redirect('/welcome');
-			} else {
-				console.log("Record not inserted.");
-				res.redirect('/register');
-			}			
-			res.end();*/
-			await request.post('http://localhost:3000/webservice/register', {form:req.body},  function (error, response) {
-				if (!error && response.statusCode === 200) {
-					var parsedData = JSON.parse(response.body);
-					console.log(parsedData['error']['name']);
-					if(parsedData['status'] == true){
-						res.redirect('/welcome');
-						res.end();
-						
-					}else{
-						res.redirect('/register');
-						res.end();
-						
-					}	
-				 }
-				 
-			});		
-	},
 
 	write_post : async function(req, res){
 		new_post = await model.write_post(req, res);
