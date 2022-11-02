@@ -14,7 +14,8 @@ CREATE TABLE user (
     school VARCHAR(50) NOT NULL,
     department VARCHAR(50) NOT NULL,
     class VARCHAR(20) NOT NULL,
-    about VARCHAR(200)
+    about VARCHAR(200),
+    isConfirmed INT NOT NULL DEFAULT(0)
 );
 
 CREATE TABLE category (

@@ -61,6 +61,9 @@ const user = db.define('user', {
     },
     about: {
         type: Sequelize.STRING(200)
+    },
+    isConfirmed: {
+        type: Sequelize.INTEGER
     }
 });
 user.sync().then(() => {
@@ -228,6 +231,17 @@ const model = {
         return new_user.dataValues;
     },
 
+    async confirm_register (req,res) {	
+
+        const confirm_user = await user.update( 
+            { isConfirmed: 1 },
+            { where: { mail: req.body.mail } }
+        );
+
+        return confirm_user;
+    },
+    
+
     async forum (req,res, decoded) {	
         const forumPage = await post.findAll({  
 
@@ -282,7 +296,7 @@ const model = {
 
         const forumPage_category = await post.findAll({  
                 where: {
-                    category_id: req.query.category_id,
+                    category_id: req.body.category_id,
                 },
                 include: [
                     {
@@ -336,7 +350,7 @@ const model = {
         const forumPage_search = await post.findAll({  
             where: {
                 p_text: {
-                    [Op.like]: '%' + req.query.query + '%'
+                    [Op.like]: '%' + req.body.query + '%'
                 }
             },
             include: [
@@ -390,7 +404,7 @@ const model = {
 
         const likePost = await vote.create({
             user_id: decoded.user_id,
-            post_id: req.query.post_id,
+            post_id: req.body.post_id,
             raw: true,
         });
 
@@ -401,8 +415,8 @@ const model = {
 
         const newPost = await post.create({
             user_id: decoded.user_id,
-            p_text: req.query.p_text,
-            category_id: req.query.category_id,
+            p_text: req.body.p_text,
+            category_id: req.body.category_id,
             p_vote: 0,
             time : moment(new Date()).format('MMMM Do YYYY, h:mm:ss a'),
             raw: true,

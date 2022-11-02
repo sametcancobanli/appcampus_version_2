@@ -11,6 +11,17 @@ const webcontroller = {
         try {
 			var new_register = await model.check_register(req, res);
 			if (new_register.user_id > 0) {
+				createUserWithEmailAndPassword(auth, new_register.mail, new_register.password)
+					.then((userCredential) => {
+						// Signed in 
+						const user = userCredential.user;
+						// ...
+					})
+					.catch((error) => {
+						const errorCode = error.code;
+						const errorMessage = error.message;
+						// ..
+					});
                 var returnValue = {'status': true, "values":new_register};
 				res.send(returnValue);
 			} else {
@@ -25,10 +36,26 @@ const webcontroller = {
 		}	
 	},
 
+	
+
 	loginService : async function(req, res) {
 		try{
 			var new_login = await model.check_login(req, res);
-			if (new_login.length > 0) {
+
+			if (new_login[0].isConfirmed == 0) {
+
+				signInWithEmailAndPassword(auth, new_login[0].mail, new_login[0].password)
+					.then((userCredential) => {
+					// Signed in 
+					const user = userCredential.user;
+					})
+					.catch((error) => {
+					const errorCode = error.code;
+					const errorMessage = error.message;
+					});
+
+				var confirm_register = await model.confirm_register(req, res);
+
 				const token = jwt.sign({
 					mail: new_login[0].mail,
 					user_id : new_login[0].user_id,
@@ -37,6 +64,17 @@ const webcontroller = {
 				})
 				var returnValue = {'status': true, "token":token};
 				res.send(returnValue);
+
+			} else if (new_login[0].isConfirmed == 1) {
+				const token = jwt.sign({
+					mail: new_login[0].mail,
+					user_id : new_login[0].user_id,
+				}, 'secretKey', {
+					expiresIn: "3h",
+				})
+				var returnValue = {'status': true, "token":token};
+				res.send(returnValue);
+
 			} else {
 				console.log("User not loggedin.");
 				throw 'User not loggedin.';
