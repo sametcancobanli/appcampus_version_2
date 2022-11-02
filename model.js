@@ -411,6 +411,22 @@ const model = {
         return newPost;
     },
 
+    async categories (req,res,decoded) {	
+
+        const categories = await category.findAll({
+
+
+            group: ['category.category_id'],
+        
+            order: [
+                ['category_id', 'ASC'],
+            ],
+
+        });
+
+        return categories;
+    },
+
 // lllllllllllllllllllllllllllllllllllllllllll
 
     async post (req,res, decoded) {	

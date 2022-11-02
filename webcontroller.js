@@ -51,7 +51,7 @@ const webcontroller = {
 	forumPage : async function(req, res){
 		try {
 			if (true) {
-				const token = req.headers.authorization.split(" ")[1]
+				const token = req.headers.authorization.split(" ")[1];
         		var decoded = jwt_decode(token);
 				var forumPage = await model.forum(req, res, decoded);
 				var returnValue = {'status': true, "values":forumPage};
@@ -150,6 +150,25 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var newPost = await model.new_post(req, res, decoded);
 				var returnValue = {'status': true, "values":newPost};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	categories : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var categories = await model.categories(req, res, decoded);
+				var returnValue = {'status': true, "values":categories};
 				res.send(returnValue);			
 			} else {
 				console.log("User not loggedin.");
