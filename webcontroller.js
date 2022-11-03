@@ -2,6 +2,7 @@ const { response } = require('express');
 const model = require('./model');
 const jwt = require('jsonwebtoken');
 const jwt_decode = require('jwt-decode');
+const { BREAK } = require('graphql');
 
 ///////////////////////////////////////////////////////////////////////  RESTFUL START  ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -35,8 +36,6 @@ const webcontroller = {
 			
 		}	
 	},
-
-	
 
 	loginService : async function(req, res) {
 		try{
@@ -92,8 +91,18 @@ const webcontroller = {
 				const token = req.headers.authorization.split(" ")[1];
         		var decoded = jwt_decode(token);
 				var forumPage = await model.forum(req, res, decoded);
+
+				for (let i = 0; i < forumPage.length; i++) {
+					for (let j = 0; j < forumPage[i].votes.length; j++) {
+						if(forumPage[i].votes[j].user_id == decoded.user_id){
+							forumPage[i].user.dataValues.itsliked = "yes";
+							break;
+						}
+					}
+				}
+
 				var returnValue = {'status': true, "values":forumPage};
-				res.send(returnValue);			
+				res.send(returnValue);		
 			} else {
 				console.log("Post are not loading..");
 				throw 'Post are not loading..';
@@ -111,6 +120,16 @@ const webcontroller = {
 				const token = req.headers.authorization.split(" ")[1]
         		var decoded = jwt_decode(token);
 				var forumPage_category = await model.forum_category(req, res, decoded);
+
+				for (let i = 0; i < forumPage.length; i++) {
+					for (let j = 0; j < forumPage[i].votes.length; j++) {
+						if(forumPage[i].votes[j].user_id == decoded.user_id){
+							forumPage[i].user.dataValues.itsliked = "yes";
+							break;
+						}
+					}
+				}
+
 				var returnValue = {'status': true, "values":forumPage_category};
 				res.send(returnValue);			
 			} else {
@@ -130,25 +149,16 @@ const webcontroller = {
 				const token = req.headers.authorization.split(" ")[1]
         		var decoded = jwt_decode(token);
 				var forumPage_search = await model.forum_search(req, res, decoded);
-				var returnValue = {'status': true, "values":forumPage_search};
-				res.send(returnValue);			
-			} else {
-				console.log("User not loggedin.");
-				throw 'User not loggedin.';
-			}	
-		} catch (error) {
-			console.log(error);
-			var returnValue = {'status': false, "error": error};
-			res.send(returnValue);
-		}
-	},
 
-	forumSearch : async function(req, res){
-		try {
-			if (true) {
-				const token = req.headers.authorization.split(" ")[1]
-        		var decoded = jwt_decode(token);
-				var forumPage_search = await model.forum_search(req, res, decoded);
+				for (let i = 0; i < forumPage.length; i++) {
+					for (let j = 0; j < forumPage[i].votes.length; j++) {
+						if(forumPage[i].votes[j].user_id == decoded.user_id){
+							forumPage[i].user.dataValues.itsliked = "yes";
+							break;
+						}
+					}
+				}
+
 				var returnValue = {'status': true, "values":forumPage_search};
 				res.send(returnValue);			
 			} else {
@@ -169,6 +179,25 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var likePost = await model.like_post(req, res, decoded);
 				var returnValue = {'status': true, "values":likePost};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	dislikePost : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var dislikePost = await model.dislike_post(req, res, decoded);
+				var returnValue = {'status': true, "values":dislikePost};
 				res.send(returnValue);			
 			} else {
 				console.log("User not loggedin.");
@@ -219,7 +248,25 @@ const webcontroller = {
 		}
 	},
 
+	profile : async function(req, res){
 
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var profile = await model.profile(req, res);
+				var returnValue = {'status': true, "values":profile};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
 
 	//////////////////////////////////////////
 
