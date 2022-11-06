@@ -121,10 +121,10 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage_category = await model.forum_category(req, res, decoded);
 
-				for (let i = 0; i < forumPage.length; i++) {
-					for (let j = 0; j < forumPage[i].votes.length; j++) {
-						if(forumPage[i].votes[j].user_id == decoded.user_id){
-							forumPage[i].user.dataValues.itsliked = "yes";
+				for (let i = 0; i < forumPage_category.length; i++) {
+					for (let j = 0; j < forumPage_category[i].votes.length; j++) {
+						if(forumPage_category[i].votes[j].user_id == decoded.user_id){
+							forumPage_category[i].user.dataValues.itsliked = "yes";
 							break;
 						}
 					}
@@ -192,6 +192,8 @@ const webcontroller = {
 	},
 
 	dislikePost : async function(req, res){
+
+		
 		try {
 			if (true) {
 				const token = req.headers.authorization.split(" ")[1]
