@@ -15,7 +15,8 @@ CREATE TABLE user (
     department VARCHAR(50) NOT NULL,
     class VARCHAR(20) NOT NULL,
     about VARCHAR(200),
-    isConfirmed INT NOT NULL DEFAULT(0)
+    isConfirmed INT NOT NULL DEFAULT(0),
+    photo VARCHAR(8000)
 );
 
 CREATE TABLE category (

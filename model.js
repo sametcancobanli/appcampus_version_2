@@ -64,6 +64,9 @@ const user = db.define('user', {
     },
     isConfirmed: {
         type: Sequelize.INTEGER
+    },
+    isConfirmed: {
+        type: Sequelize.STRING(8000)
     }
 });
 user.sync().then(() => {
