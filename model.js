@@ -379,7 +379,7 @@ const model = {
     },
 
     async dislike_post (req,res, decoded) {	
-        
+
         const dislikePost = await vote.destroy({
 
             where:{
@@ -403,6 +403,20 @@ const model = {
         });
 
         return newPost;
+    },
+
+    async add_photo (req,res,decoded) {	
+
+        return addPhoto = await user.update(
+            {
+                photo: req.body.photo,
+            },
+            {
+                where:{ 
+                    user_id: decoded.user_id 
+                },
+            }
+        );
     },
 
     async categories (req,res,decoded) {	

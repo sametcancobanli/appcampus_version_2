@@ -67,6 +67,7 @@ app.post("/webservice/categories", checkJwt, webcontroller.categories);
 app.post("/webservice/likepost", checkJwt, webcontroller.likePost);
 app.post("/webservice/dislikepost", checkJwt, webcontroller.dislikePost);
 app.post("/webservice/newpost", checkJwt, webcontroller.newPost);
+app.post("/webservice/addphoto", checkJwt, webcontroller.addPhoto);
 
 app.post("/webservice/profile", checkJwt, webcontroller.profile);
 
