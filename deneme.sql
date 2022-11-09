@@ -47,5 +47,6 @@ CREATE TABLE vote (
     user_id INT NOT NULL,
     post_id INT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user(user_id),
-    FOREIGN KEY (post_id) REFERENCES post(post_id)
+    FOREIGN KEY (post_id) REFERENCES post(post_id),
+	CONSTRAINT likes UNIQUE (user_id,post_id)
 );

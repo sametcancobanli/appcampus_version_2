@@ -150,10 +150,10 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage_search = await model.forum_search(req, res, decoded);
 
-				for (let i = 0; i < forumPage.length; i++) {
-					for (let j = 0; j < forumPage[i].votes.length; j++) {
-						if(forumPage[i].votes[j].user_id == decoded.user_id){
-							forumPage[i].user.dataValues.itsliked = "yes";
+				for (let i = 0; i < forumPage_search.length; i++) {
+					for (let j = 0; j < forumPage_search[i].votes.length; j++) {
+						if(forumPage_search[i].votes[j].user_id == decoded.user_id){
+							forumPage_search[i].user.dataValues.itsliked = "yes";
 							break;
 						}
 					}

@@ -371,29 +371,15 @@ const model = {
     },
 
     async like_post (req,res, decoded) {
-        const likePost1 = await vote.findAll({
-            where:{
-                user_id: decoded.user_id,
-                post_id: req.body.post_id,
-            }
-        });
-        if(likePost1.length == 0){
-            const likePost2 = await vote.create({
-                    user_id: decoded.user_id,
-                    post_id: req.body.post_id, 
-            });
-            return likePost2;
-        }
-        else{
-            return likePost1;
-        }
-       
 
-        
+        return likePost = await vote.create({
+            user_id: decoded.user_id,
+            post_id: req.body.post_id,
+        });   
     },
 
     async dislike_post (req,res, decoded) {	
-
+        
         const dislikePost = await vote.destroy({
 
             where:{
