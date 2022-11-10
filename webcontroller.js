@@ -34,39 +34,13 @@ const webcontroller = {
 
 			if (new_login[0].isConfirmed == 0) {
 				await firebase.auth().createUserWithEmailAndPassword(new_login[0].mail, new_login[0].password)
-					.then((userCredential) => {
-						// Signed in 
-						var user = userCredential.user;
-						// ...
-					})
 					.catch((error) => {
 						var errorCode = error.code;
 						var errorMessage = error.message;
-						var returnValue = {'status': false, "error": error};
-						res.send(returnValue);
+						throw error.message
 					});
-
 				var confirm_register = await model.confirm_register(req, res);
 
-			} else if (new_login[0].isConfirmed == 1) {
-				await firebase.auth().signInWithEmailAndPassword(new_login[0].mail, new_login[0].password)
-					.then((userCredential) => {
-						// Signed in 
-						const user = userCredential.user;
-					})
-					.catch((error) => {
-						var errorCode = error.code;
-						var errorMessage = error.message;
-						var returnValue = {'status': false, "error": error};
-						res.send(returnValue);
-					});
-
-			} else {
-				console.log("User not loggedin.");
-				throw 'User not loggedin.';
-			}
-
-			if(new_login[0].isConfirmed == 1){
 				const token = jwt.sign({
 					mail: new_login[0].mail,
 					user_id : new_login[0].user_id,
@@ -74,13 +48,34 @@ const webcontroller = {
 					expiresIn: "3h",
 				})
 				var returnValue = {'status': true, "token":token};
-				return returnValue;
+
+			} else if (new_login[0].isConfirmed == 1) {
+				await firebase.auth().signInWithEmailAndPassword(new_login[0].mail, new_login[0].password)
+					.catch((error) => {
+						var errorCode = error.code;
+						var errorMessage = error.message;
+						throw error.message
+					});
+
+					const token = jwt.sign({
+						mail: new_login[0].mail,
+						user_id : new_login[0].user_id,
+					}, 'secretKey', {
+						expiresIn: "3h",
+					})
+					var returnValue = {'status': true, "token":token};
+
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
 			}
+
+			res.send(returnValue);
 
 		} catch(error) {
 			console.log(error);
 			var returnValue = {'status': false, "error": error};
-			return returnValue;
+			res.send(returnValue);
 		}
 	},
 
