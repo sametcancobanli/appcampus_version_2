@@ -9,6 +9,7 @@ const uuid = require('uuid');
 options = { multi: true };
 const moment = require('moment-timezone');
 const { DataTypes } = require("sequelize");
+const sequelize = require('sequelize');
 
 // connect db
 const db = new Sequelize("uni_media", "root", "penguen123", {
@@ -67,7 +68,12 @@ const user = db.define('user', {
     },
     isConfirmed: {
         type: Sequelize.STRING(8000)
-    }
+    },
+    creation_time: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        allowNull: false,
+    },
 });
 // user.sync().then(() => {
 //     console.log('user table created');
@@ -103,9 +109,11 @@ const post = db.define('post', {
     p_vote: {
         type: Sequelize.INTEGER
     },
-    // time: {
-    //     type: Sequelize.STRING(50),
-    // },
+    creation_time: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        allowNull: false,
+    },
 });
 // post.sync().then(() => {
 //     console.log('post table created');
@@ -124,7 +132,12 @@ const comment = db.define('comment', {
     },
     c_text: {
         type: Sequelize.STRING(140)
-    }
+    },
+    creation_time: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        allowNull: false,
+    },
 });
 // comment.sync().then(() => {
 //     console.log('comment table created');
@@ -140,7 +153,12 @@ const vote = db.define('vote', {
     },
     user_id: {
         type: Sequelize.INTEGER,
-    }
+    },
+    creation_time: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        allowNull: false,
+    },
 });
 // vote.sync().then(() => {
 //     console.log('vote table created');
@@ -228,7 +246,7 @@ const model = {
                 school: 'itü',
                 department: req.body.department,
                 class: req.body.class,
-                about: req.body.about,
+                about: req.body.about
         });
 
         return new_user.dataValues;
@@ -401,7 +419,6 @@ const model = {
             p_text: req.body.p_text,
             category_id: req.body.category_id,
             p_vote: 0,
-            time : moment(new Date()).format('MMMM Do YYYY, h:mm:ss a'),
             raw: true,
         });
 
