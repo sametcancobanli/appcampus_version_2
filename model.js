@@ -69,9 +69,9 @@ const user = db.define('user', {
         type: Sequelize.STRING(8000)
     }
 });
-user.sync().then(() => {
-    console.log('user table created');
-});
+// user.sync().then(() => {
+//     console.log('user table created');
+// });
 
 const category = db.define('category', {
     category_id: {
@@ -82,9 +82,9 @@ const category = db.define('category', {
         type: Sequelize.STRING(50)
     }
 });
-category.sync().then(() => {
-    console.log('category table created');
-});
+// category.sync().then(() => {
+//     console.log('category table created');
+// });
 
 const post = db.define('post', {
     post_id: {
@@ -107,9 +107,9 @@ const post = db.define('post', {
     //     type: Sequelize.STRING(50),
     // },
 });
-user.sync().then(() => {
-    console.log('post table created');
-});
+// post.sync().then(() => {
+//     console.log('post table created');
+// });
 
 const comment = db.define('comment', {
     comment_id: {
@@ -126,9 +126,9 @@ const comment = db.define('comment', {
         type: Sequelize.STRING(140)
     }
 });
-user.sync().then(() => {
-    console.log('comment table created');
-});
+// comment.sync().then(() => {
+//     console.log('comment table created');
+// });
 
 const vote = db.define('vote', {
     vote_id: {
@@ -142,9 +142,9 @@ const vote = db.define('vote', {
         type: Sequelize.INTEGER,
     }
 });
-user.sync().then(() => {
-    console.log('vote table created');
-});
+// vote.sync().then(() => {
+//     console.log('vote table created');
+// });
 
 user.hasMany(post, {
     foreignKey: 'user_id',

@@ -2,7 +2,9 @@ const { response } = require('express');
 const model = require('./model');
 const jwt = require('jsonwebtoken');
 const jwt_decode = require('jwt-decode');
-const { BREAK } = require('graphql');
+
+var firebase = require("firebase/compat/app");
+require("firebase/compat/auth");
 
 ///////////////////////////////////////////////////////////////////////  RESTFUL START  ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -12,17 +14,6 @@ const webcontroller = {
         try {
 			var new_register = await model.check_register(req, res);
 			if (new_register.user_id > 0) {
-				createUserWithEmailAndPassword(auth, new_register.mail, new_register.password)
-					.then((userCredential) => {
-						// Signed in 
-						const user = userCredential.user;
-						// ...
-					})
-					.catch((error) => {
-						const errorCode = error.code;
-						const errorMessage = error.message;
-						// ..
-					});
                 var returnValue = {'status': true, "values":new_register};
 				res.send(returnValue);
 			} else {
@@ -42,46 +33,54 @@ const webcontroller = {
 			var new_login = await model.check_login(req, res);
 
 			if (new_login[0].isConfirmed == 0) {
-
-				signInWithEmailAndPassword(auth, new_login[0].mail, new_login[0].password)
+				await firebase.auth().createUserWithEmailAndPassword(new_login[0].mail, new_login[0].password)
 					.then((userCredential) => {
-					// Signed in 
-					const user = userCredential.user;
+						// Signed in 
+						var user = userCredential.user;
+						// ...
 					})
 					.catch((error) => {
-					const errorCode = error.code;
-					const errorMessage = error.message;
+						var errorCode = error.code;
+						var errorMessage = error.message;
+						var returnValue = {'status': false, "error": error};
+						res.send(returnValue);
 					});
 
 				var confirm_register = await model.confirm_register(req, res);
 
-				const token = jwt.sign({
-					mail: new_login[0].mail,
-					user_id : new_login[0].user_id,
-				}, 'secretKey', {
-					expiresIn: "3h",
-				})
-				var returnValue = {'status': true, "token":token};
-				res.send(returnValue);
-
 			} else if (new_login[0].isConfirmed == 1) {
-				const token = jwt.sign({
-					mail: new_login[0].mail,
-					user_id : new_login[0].user_id,
-				}, 'secretKey', {
-					expiresIn: "3h",
-				})
-				var returnValue = {'status': true, "token":token};
-				res.send(returnValue);
+				await firebase.auth().signInWithEmailAndPassword(new_login[0].mail, new_login[0].password)
+					.then((userCredential) => {
+						// Signed in 
+						const user = userCredential.user;
+					})
+					.catch((error) => {
+						var errorCode = error.code;
+						var errorMessage = error.message;
+						var returnValue = {'status': false, "error": error};
+						res.send(returnValue);
+					});
 
 			} else {
 				console.log("User not loggedin.");
 				throw 'User not loggedin.';
 			}
+
+			if(new_login[0].isConfirmed == 1){
+				const token = jwt.sign({
+					mail: new_login[0].mail,
+					user_id : new_login[0].user_id,
+				}, 'secretKey', {
+					expiresIn: "3h",
+				})
+				var returnValue = {'status': true, "token":token};
+				return returnValue;
+			}
+
 		} catch(error) {
 			console.log(error);
 			var returnValue = {'status': false, "error": error};
-			res.send(returnValue);
+			return returnValue;
 		}
 	},
 

@@ -3,24 +3,14 @@ var express     = require("express"),
     multer      = require("multer"),
     bodyParser  = require("body-parser"),
     app         = express();
-    // path 		= require('path');
-    // session     = require('express-session');
     expressGraphQL = require('express-graphql');
 const url 		= require('url');    
 const checkJwt = require('./auth');
+var firebase = require("firebase/compat/app");
+require("firebase/compat/auth");
 ////////////////////////////////////////
 
-// Import the functions you need from the SDKs you need
-// import { initializeApp } from "firebase/app";
-// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-
-// import { getAnalytics } from "firebase/analytics";.....................
-
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCM6oA_67_dyX4sLlxpywo0Q_btGP4kV-U",
   authDomain: "appcampus-f2c15.firebaseapp.com",
@@ -32,27 +22,12 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-// const app_firebase = initializeApp(firebaseConfig);
-// const auth = getAuth(app_firebase);
-
-// const analytics = getAnalytics(app);......................
-
-//////// dependencies attributes ///////
-// app.use(session({
-// 	secret: 'secret',
-// 	resave: true,
-// 	saveUninitialized: true
-// }));
+const app_firebase = firebase.initializeApp(firebaseConfig);
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended : true}));
-// app.use(express.static("public"));
-// app.set("view engine", "ejs");
-// app.set('views', path.join(__dirname, 'views'));
-////////////////////////////////////////
+app.use(bodyParser.urlencoded({extended : true}));6
 
 ////////////// routes //////////////////
-const controller = require('./controller');
 const webcontroller = require('./webcontroller');
 
 
