@@ -236,6 +236,7 @@ const model = {
     },
 
     async check_register (req,res) {	
+        
 
         const new_user = await user.create({ 
                 user_id: req.body.user_id,
@@ -243,7 +244,7 @@ const model = {
                 password: req.body.password,
                 name: req.body.name,
                 surname: req.body.surname,
-                school: 'itü',
+                school: req.body.school,
                 department: req.body.department,
                 class: req.body.class,
                 about: req.body.about
