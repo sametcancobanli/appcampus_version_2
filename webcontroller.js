@@ -16,15 +16,15 @@ const webcontroller = {
 					.catch((error) => {
 						var errorCode = error.code;
 						var errorMessage = error.message;
-						var returnValue = {'status': false, "error": error.message};
-						res.send(returnValue);
+						// var returnValue = {'status': false, "error": error.message};
+						// res.send(returnValue);
 						throw error.message
 					});
 			await firebase.auth().currentUser.sendEmailVerification().catch((error) => {
 						var errorCode = error.code;
 						var errorMessage = error.message;
-						var returnValue = {'status': false, "error": error.message};
-						res.send(returnValue);
+						// var returnValue = {'status': false, "error": error.message};
+						// res.send(returnValue);
 						throw error.message
 				});;
 			var new_register = await model.check_register(req, res);
@@ -67,10 +67,11 @@ const webcontroller = {
 					.catch((error) => {
 						var errorCode = error.code;
 						var errorMessage = error.message;
-						var returnValue = {'status': false, "error": error.message};
-						res.send(returnValue);
+						// var returnValue = {'status': false, "error": error.message};
+						// res.send(returnValue);
 						throw error.message
 					});
+					var user = firebase.auth().currentUser;
 					var emailVerifyStatus = firebase.auth().currentUser.emailVerified;
 					if(emailVerifyStatus){
 						 var confirm_register = await model.confirm_register(req, res);
