@@ -25,7 +25,7 @@ const firebaseConfig = {
 const app_firebase = firebase.initializeApp(firebaseConfig);
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended : true}));6
+app.use(bodyParser.urlencoded({extended : true}));
 
 ////////////// routes //////////////////
 const webcontroller = require('./webcontroller');
