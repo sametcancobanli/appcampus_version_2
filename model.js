@@ -426,6 +426,18 @@ const model = {
         return newPost;
     },
 
+    async new_comment (req,res, decoded) {	
+
+        const newComment = await comment.create({
+            user_id: decoded.user_id,
+            c_text: req.body.c_text,
+            post_id: req.body.post_id,
+            raw: true,
+        });
+
+        return newComment;
+    },
+
     async add_photo (req,res,decoded) {	
 
         return addPhoto = await user.update(
@@ -503,12 +515,73 @@ const model = {
                 where: {
                     user_id: req.body.user_id,
                 },
+                include: [
+                    {
+                        model : post,
+                    }
+                ],
         });
 
         return profile;
     },
 
-// lllllllllllllllllllllllllllllllllllllllllll
+    async update_profile (req,res, decoded) {	
+
+        const updateProfile = await user.update(
+
+            {
+                class: req.body.class,
+                department: req.body.department,
+                about: req.body.about,
+            },            
+            {where: { 
+                user_id: decoded.user_id 
+            }},
+        );
+            
+        return updateProfile;
+    },
+
+    async delete_post (req,res, decoded) {	
+
+        const deletePost = await post.destroy({  
+                where: {
+                    post_id: req.body.post_id,
+                    user_id: decoded.user_id
+                },
+        });
+
+        return deletePost;
+    },
+
+    async delete_comment (req,res, decoded) {	
+
+        const deleteComment = await comment.destroy({  
+                where: {
+                    comment_id: req.body.comment_id,
+                    user_id: decoded.user_id
+                },
+        });
+
+        return deleteComment;
+    },
+
+// lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll
+
+    async post (req,res) {	
+
+        const all_post = await post.findAll({
+            raw: true,
+            include: [
+                {
+                    model : user,
+                    attributes : ['name', 'surname']
+                }
+            ],
+        });
+
+        return all_post;
+    },
 
     async comment (req,res) {	
 
@@ -525,7 +598,7 @@ const model = {
         return all_comment;
     },
 
-    async like (req,res) {//3
+    async like (req,res) {
 
         const all_like = await post.findAll({
             raw: true,
@@ -541,65 +614,9 @@ const model = {
             order: [
                 ['post_id', 'DESC'],
             ],
-    });
+        });
 
         return all_like;
-    },
-
-    async write_comment (req,res) {	
-
-        const new_comment = await comment.create({
-            user_id: req.session.token,
-            c_text: req.body.c_text,
-            post_id: req.body.post_id,
-            raw: true,
-        });
-
-        return new_comment;
-    },
-
-    async show_profile (req,res, param) {	
-
-        const profile = await user.findAll({  
-                where: {
-                    user_id: param.user_id,
-                },
-                raw: true,
-        });
-
-        return profile[0];
-    },
-
-    async post_profile (req,res, param) {	
-
-        const all_post = await post.findAll({  
-
-                raw: true,
-                include: [user],
-
-                include: [
-                    {
-                        model : vote,
-                        attributes : [[Sequelize.fn('COUNT', Sequelize.col('votes.post_id')), 'like']]
-                    },
-
-                    {
-                        model : comment,
-                        attributes : [[Sequelize.fn('COUNT', Sequelize.col('comments.post_id')), 'comment']]
-                    },
-                ],
-                group: ['post.post_id'],
-
-                where: {
-                    user_id: param.user_id,
-                },
-
-                order: [
-                    ['post_id', 'DESC'],
-                ],
-        });
-
-        return all_post;
     },
 
     async count_post (req, res) {	
@@ -619,32 +636,6 @@ const model = {
         return num_post;
     },
 
-    async update_profile (req,res, param) {	
-
-        const update_profile = await user.update(
-
-            {
-                mail: req.body.mail,
-                school: req.body.school,
-                class: req.body.class,
-                department: req.body.department,
-            },
-            {where: { user_id: param.user_id }}
-        );
-            
-        return update_profile;
-    },
-
-    async delete_post (req,res, param) {	
-
-        const delete_post = await post.destroy({  
-                where: {
-                    post_id: param.post_id,
-                },
-        });
-
-        return delete_post;
-    },
 }
 
 module.exports = model;

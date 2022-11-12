@@ -48,61 +48,41 @@ const webcontroller = {
 			var new_login = await model.check_login(req, res);
 
 			if (new_login[0].isConfirmed == 0) {
-				// await firebase.auth().createUserWithEmailAndPassword(new_login[0].mail, new_login[0].password)
-				// 	.catch((error) => {
-				// 		var errorCode = error.code;
-				// 		var errorMessage = error.message;
-				// 		throw error.message
-				// 	});
-				// var confirm_register = await model.confirm_register(req, res);
-
-				// const token = jwt.sign({
-				// 	mail: new_login[0].mail,
-				// 	user_id : new_login[0].user_id,
-				// }, 'secretKey', {
-				// 	expiresIn: "3h",
-				// })
-				// var returnValue = {'status': true, "token":token};
 				await firebase.auth().signInWithEmailAndPassword(new_login[0].mail, new_login[0].password)
 					.catch((error) => {
 						var errorCode = error.code;
 						var errorMessage = error.message;
-						// var returnValue = {'status': false, "error": error.message};
-						// res.send(returnValue);
 						throw error.message
 					});
-					var user = firebase.auth().currentUser;
-					var emailVerifyStatus = firebase.auth().currentUser.emailVerified;
-					if(emailVerifyStatus){
-						 var confirm_register = await model.confirm_register(req, res);
-						 const token = jwt.sign({
-							mail: new_login[0].mail,
-							user_id : new_login[0].user_id,
-						}, 'secretKey', {
-							expiresIn: "3h",
-						})
-						var returnValue = {'status': true, "token":token};
-					}
-					else{
-						var returnValue = {'status': false, "error":'Please verify your email'};
-					}
-				
+					
+				var user = firebase.auth().currentUser;
+				var emailVerifyStatus = firebase.auth().currentUser.emailVerified;
 
-			} else if (new_login[0].isConfirmed == 1) {
-				// await firebase.auth().signInWithEmailAndPassword(new_login[0].mail, new_login[0].password)
-				// 	.catch((error) => {
-				// 		var errorCode = error.code;
-				// 		var errorMessage = error.message;
-				// 		throw error.message
-				// 	});
-
+				if(emailVerifyStatus){
+					var confirm_register = await model.confirm_register(req, res);
 					const token = jwt.sign({
 						mail: new_login[0].mail,
 						user_id : new_login[0].user_id,
 					}, 'secretKey', {
 						expiresIn: "3h",
 					})
+					
 					var returnValue = {'status': true, "token":token};
+
+				} else {
+					var returnValue = {'status': false, "error":'Please verify your email'};
+				}
+
+			} else if (new_login[0].isConfirmed == 1) {
+
+				const token = jwt.sign({
+					mail: new_login[0].mail,
+					user_id : new_login[0].user_id,
+				}, 'secretKey', {
+					expiresIn: "3h",
+				})
+				
+				var returnValue = {'status': true, "token":token};
 
 			} else {
 				console.log("User not loggedin.");
@@ -264,6 +244,25 @@ const webcontroller = {
 		}
 	},
 
+	newComment : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var newComment = await model.new_comment(req, res, decoded);
+				var returnValue = {'status': true, "values":newComment};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
 	addPhoto : async function(req, res){
 		try {
 			if (true) {
@@ -308,7 +307,7 @@ const webcontroller = {
 			if (true) {
 				const token = req.headers.authorization.split(" ")[1]
         		var decoded = jwt_decode(token);
-				var profile = await model.profile(req, res);
+				var profile = await model.profile(req, res, decoded);
 				var returnValue = {'status': true, "values":profile};
 				res.send(returnValue);			
 			} else {
@@ -321,6 +320,67 @@ const webcontroller = {
 			res.send(returnValue);
 		}
 	},
+
+	updateProfile : async function(req, res){
+
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var updateProfile = await model.update_profile(req, res, decoded);
+				var returnValue = {'status': true, "values":updateProfile};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	deletePost : async function(req, res){
+
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var deletePost = await model.delete_post(req, res, decoded);
+				var returnValue = {'status': true, "values":deletePost};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	deleteComment : async function(req, res){
+
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var deleteComment = await model.delete_comment(req, res, decoded);
+				var returnValue = {'status': true, "values":deleteComment};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
 
 	//////////////////////////////////////////
 
