@@ -98,6 +98,33 @@ const webcontroller = {
 		}
 	},
 
+	refreshToken : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1];
+        		var decoded = jwt_decode(token);
+
+				const refreshToken = jwt.sign({
+					mail: decoded.mail,
+					user_id : decoded.user_id,
+				}, 'secretKey', {
+					expiresIn: "3h",
+				})
+
+
+				var returnValue = {'status': true, "token":refreshToken};
+				res.send(returnValue);		
+			} else {
+				console.log("Post are not loading..");
+				throw 'Post are not loading..';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
 	forumPage : async function(req, res){
 		try {
 			if (true) {
