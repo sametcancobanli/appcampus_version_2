@@ -395,6 +395,50 @@ const model = {
         return forumPage_search;
     },
 
+    async forum_profile (req,res, decoded) {	
+
+        const forumPage_profile = await post.findAll({  
+            where: {
+                user_id : decoded.user_id
+
+            },
+            include: [
+                {
+                    model : user,
+                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+
+                },
+                {
+                    model : comment,
+                    separate: true,
+                    attributes : ['user_id', 'c_text', 'comment_id'],
+                    include: [
+                        {
+                            model: user,
+                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                        },
+                    ],
+                },
+                {
+                    model: vote,
+                    separate: true,
+                    attributes: ['user_id', 'vote_id'],
+                    include: [
+                        {
+                            model: user,
+                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                        },
+                    ],
+                },
+            ],
+            
+            group: ['post.post_id'],
+            order: [['post_id', 'DESC']],
+        });
+                
+        return forumPage_profile;
+    },
+
     async like_post (req,res, decoded) {
 
         return likePost = await vote.create({
@@ -471,58 +515,12 @@ const model = {
         return categories;
     },
 
-    async forum (req,res, decoded) {	
-
-        const forumPage = await post.findAll({  
-
-            include: [
-                {
-                    model : user,
-                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-
-                },
-                {
-                    model : comment,
-                    separate: true,
-                    attributes : ['user_id', 'c_text', 'comment_id'],
-                    include: [
-                        {
-                            model: user,
-                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-                        },
-                    ],
-                },
-                {
-                    model: vote,
-                    separate: true,
-                    attributes: ['user_id', 'vote_id'],
-                    include: [
-                        {
-                            model: user,
-                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-                        },
-                    ],
-                },
-            ],
-            
-            group: ['post.post_id'],
-            order: [['post_id', 'DESC']],
-        });
-
-        return forumPage;
-    },
-
     async profile (req,res) {	
 
         const profile = await user.findAll({  
                 where: {
                     user_id: req.body.user_id,
-                },
-                include: [
-                    {
-                        model : post,
-                    }
-                ],
+                }
         });
 
         return profile;
