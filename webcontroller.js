@@ -334,9 +334,9 @@ const webcontroller = {
 			if (true) {
 				const token = req.headers.authorization.split(" ")[1]
         		var decoded = jwt_decode(token);
-				var profile = await model.profile(req, res, decoded);
+				// var profile = await model.profile(req, res, decoded);
 				var forumPage_profile = await model.forum_profile(req, res, decoded);
-				var returnValue = {'status': true, "values":profile, "posts" : forumPage_profile };
+				var returnValue = {'status': true, "values":forumPage_profile};
 				res.send(returnValue);			
 			} else {
 				console.log("User not loggedin.");

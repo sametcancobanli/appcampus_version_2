@@ -395,7 +395,13 @@ const model = {
         return forumPage_search;
     },
 
-    async forum_profile (req,res, decoded) {	
+    async forum_profile (req,res, decoded) {
+        
+        const profile = await user.findAll({  
+            where: {
+                user_id: req.body.user_id,
+            }
+        });
 
         const forumPage_profile = await post.findAll({  
             where: {
@@ -435,8 +441,12 @@ const model = {
             group: ['post.post_id'],
             order: [['post_id', 'DESC']],
         });
+        var returnVal = {
+            "user_infos":profile,
+            "user_posts":forumPage_profile
+        }
                 
-        return forumPage_profile;
+        return returnVal;
     },
 
     async like_post (req,res, decoded) {
