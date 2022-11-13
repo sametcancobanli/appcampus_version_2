@@ -34,6 +34,8 @@ const webcontroller = require('./webcontroller');
 ///////////// restful start //////////////////
 app.post("/webservice/register", webcontroller.registerService);
 app.post("/webservice/login", webcontroller.loginService);
+app.post("/webservice/refreshtoken", checkJwt, webcontroller.refreshToken);
+
 app.post("/webservice/forumpage", checkJwt, webcontroller.forumPage);
 app.post("/webservice/forumcategory", checkJwt, webcontroller.forumCategory);
 app.post("/webservice/forumsearch", checkJwt, webcontroller.forumSearch);
