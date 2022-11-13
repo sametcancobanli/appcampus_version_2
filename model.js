@@ -69,6 +69,9 @@ const user = db.define('user', {
     isConfirmed: {
         type: Sequelize.STRING(8000)
     },
+    photo: {
+        type: Sequelize.TEXT,
+    },
     creation_time: {
         type: DataTypes.DATE,
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),

@@ -67,7 +67,7 @@ const webcontroller = {
 						expiresIn: "3h",
 					})
 					
-					var returnValue = {'status': true, "token":token};
+					var returnValue = {'status': true, "token":token, "user_id": new_login[0].user_id };
 
 				} else {
 					var returnValue = {'status': false, "error":'Please verify your email'};
@@ -82,7 +82,7 @@ const webcontroller = {
 					expiresIn: "3h",
 				})
 				
-				var returnValue = {'status': true, "token":token};
+				var returnValue = {'status': true, "token":token,"user_id": new_login[0].user_id};
 
 			} else {
 				console.log("User not loggedin.");
