@@ -57,7 +57,7 @@ const user = db.define('user', {
     department: {
         type: Sequelize.STRING(50)
     },
-    class: {
+    entry_year: {
         type: Sequelize.STRING(20)
     },
     about: {
@@ -242,14 +242,13 @@ const model = {
         
 
         const new_user = await user.create({ 
-                user_id: req.body.user_id,
                 mail: req.body.mail,
                 password: req.body.password,
                 name: req.body.name,
                 surname: req.body.surname,
                 school: req.body.school,
                 department: req.body.department,
-                class: req.body.class,
+                entry_year: req.body.entry_year,
                 about: req.body.about
         });
 
@@ -541,7 +540,7 @@ const model = {
         const updateProfile = await user.update(
 
             {
-                class: req.body.class,
+                entry_year: req.body.entry_year,
                 department: req.body.department,
                 about: req.body.about,
             },            

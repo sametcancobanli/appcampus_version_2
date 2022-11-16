@@ -28,7 +28,7 @@ const webcontroller = {
 						throw error.message
 				});;
 			var new_register = await model.check_register(req, res);
-			if (new_register.user_id > 0) {
+			if (new_register.mail != " ") {
                 var returnValue = {'status': true, "values":new_register};
 				res.send(returnValue);
 			} else {

@@ -6,17 +6,18 @@ CREATE DATABASE IF NOT EXISTS `uni_media` DEFAULT CHARACTER SET utf8 COLLATE utf
 USE `uni_media`;
 
 CREATE TABLE user (
-    user_id INT NOT NULL PRIMARY KEY,
+    user_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     mail VARCHAR(50) NOT NULL,
     password VARCHAR(50) NOT NULL,
     name VARCHAR(50) NOT NULL,
     surname VARCHAR(50) NOT NULL,
     school VARCHAR(50) NOT NULL,
     department VARCHAR(50) NOT NULL,
-    class VARCHAR(20) NOT NULL,
+    entry_year VARCHAR(20) NOT NULL,
     about VARCHAR(200),
     isConfirmed INT NOT NULL DEFAULT(0),
-    photo VARCHAR(8000)
+    photo LONGTEXT,
+    creation_time TIMESTAMP
 );
 
 CREATE TABLE category (
@@ -30,8 +31,9 @@ CREATE TABLE post (
     category_id INT NOT NULL,
     p_text VARCHAR(140) NOT NULL,
     p_vote INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(user_id),
-    FOREIGN KEY (category_id) REFERENCES category(category_id)
+    creation_time TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE CASCADE
 );
 
 CREATE TABLE comment (
@@ -39,15 +41,17 @@ CREATE TABLE comment (
     user_id INT NOT NULL,
     post_id INT NOT NULL,
     c_text VARCHAR(140) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(user_id),
-    FOREIGN KEY (post_id) REFERENCES post(post_id)
+    creation_time TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE
 );
 
 CREATE TABLE vote (
 	vote_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
     post_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user(user_id),
-    FOREIGN KEY (post_id) REFERENCES post(post_id),
+    creation_time TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
 	CONSTRAINT likes UNIQUE (user_id,post_id)
 );
