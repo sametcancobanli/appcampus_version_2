@@ -310,10 +310,20 @@ const model = {
             limit: 10  // limit the output
         });
 
-        return forumPage;
+        var returnVal = {
+            "offset_info": off_set,
+            "posts":forumPage
+        }
+
+        return returnVal;
     },
 
     async forum_category (req,res, decoded) {	
+
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = off_set + req.body.offset;
+        }
 
         const forumPage_category = await post.findAll({  
             where: {
@@ -351,12 +361,23 @@ const model = {
             
             group: ['post.post_id'],
             order: [['post_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 10  // limit the output
         });
-                
-        return forumPage_category;
+        var returnVal = {
+            "offset_info": off_set,
+            "posts":forumPage_category
+        }
+
+        return returnVal;
     },
 
     async forum_search (req,res, decoded) {	
+
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = off_set + req.body.offset;
+        }
 
         const forumPage_search = await post.findAll({  
             where: {
@@ -396,12 +417,24 @@ const model = {
             
             group: ['post.post_id'],
             order: [['post_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 10  // limit the output
         });
 
-        return forumPage_search;
+        var returnVal = {
+            "offset_info": off_set,
+            "posts":forumPage_search
+        }
+
+        return returnVal;
     },
 
     async forum_profile (req,res, decoded) {
+
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = off_set + req.body.offset;
+        }
         
         const profile = await user.findAll({  
             where: {
@@ -446,8 +479,11 @@ const model = {
             
             group: ['post.post_id'],
             order: [['post_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 10  // limit the output
         });
         var returnVal = {
+            "offset_info": off_set,
             "user_infos":profile,
             "user_posts":forumPage_profile
         }
