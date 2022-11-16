@@ -57,7 +57,7 @@ const user = db.define('user', {
     department: {
         type: Sequelize.STRING(50)
     },
-    class: {
+    entry_year: {
         type: Sequelize.STRING(20)
     },
     about: {
@@ -242,14 +242,13 @@ const model = {
         
 
         const new_user = await user.create({ 
-                user_id: req.body.user_id,
                 mail: req.body.mail,
                 password: req.body.password,
                 name: req.body.name,
                 surname: req.body.surname,
                 school: req.body.school,
                 department: req.body.department,
-                class: req.body.class,
+                entry_year: req.body.entry_year,
                 about: req.body.about
         });
 
@@ -267,6 +266,11 @@ const model = {
     },
     
     async forum (req,res, decoded) {	
+
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = off_set + req.body.offset;
+        }
 
         const forumPage = await post.findAll({  
 
@@ -302,12 +306,24 @@ const model = {
             
             group: ['post.post_id'],
             order: [['post_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 10  // limit the output
         });
 
-        return forumPage;
+        var returnVal = {
+            "offset_info": off_set,
+            "posts":forumPage
+        }
+
+        return returnVal;
     },
 
     async forum_category (req,res, decoded) {	
+
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = off_set + req.body.offset;
+        }
 
         const forumPage_category = await post.findAll({  
             where: {
@@ -345,12 +361,23 @@ const model = {
             
             group: ['post.post_id'],
             order: [['post_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 10  // limit the output
         });
-                
-        return forumPage_category;
+        var returnVal = {
+            "offset_info": off_set,
+            "posts":forumPage_category
+        }
+
+        return returnVal;
     },
 
     async forum_search (req,res, decoded) {	
+
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = off_set + req.body.offset;
+        }
 
         const forumPage_search = await post.findAll({  
             where: {
@@ -390,9 +417,78 @@ const model = {
             
             group: ['post.post_id'],
             order: [['post_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 10  // limit the output
         });
 
-        return forumPage_search;
+        var returnVal = {
+            "offset_info": off_set,
+            "posts":forumPage_search
+        }
+
+        return returnVal;
+    },
+
+    async forum_profile (req,res, decoded) {
+
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = off_set + req.body.offset;
+        }
+        
+        const profile = await user.findAll({  
+            where: {
+                user_id: req.body.user_id,
+            }
+        });
+
+        const forumPage_profile = await post.findAll({  
+            where: {
+                user_id : decoded.user_id
+
+            },
+            include: [
+                {
+                    model : user,
+                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+
+                },
+                {
+                    model : comment,
+                    separate: true,
+                    attributes : ['user_id', 'c_text', 'comment_id'],
+                    include: [
+                        {
+                            model: user,
+                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                        },
+                    ],
+                },
+                {
+                    model: vote,
+                    separate: true,
+                    attributes: ['user_id', 'vote_id'],
+                    include: [
+                        {
+                            model: user,
+                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                        },
+                    ],
+                },
+            ],
+            
+            group: ['post.post_id'],
+            order: [['post_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 10  // limit the output
+        });
+        var returnVal = {
+            "offset_info": off_set,
+            "user_infos":profile,
+            "user_posts":forumPage_profile
+        }
+                
+        return returnVal;
     },
 
     async like_post (req,res, decoded) {
@@ -471,58 +567,12 @@ const model = {
         return categories;
     },
 
-    async forum (req,res, decoded) {	
-
-        const forumPage = await post.findAll({  
-
-            include: [
-                {
-                    model : user,
-                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-
-                },
-                {
-                    model : comment,
-                    separate: true,
-                    attributes : ['user_id', 'c_text', 'comment_id'],
-                    include: [
-                        {
-                            model: user,
-                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-                        },
-                    ],
-                },
-                {
-                    model: vote,
-                    separate: true,
-                    attributes: ['user_id', 'vote_id'],
-                    include: [
-                        {
-                            model: user,
-                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-                        },
-                    ],
-                },
-            ],
-            
-            group: ['post.post_id'],
-            order: [['post_id', 'DESC']],
-        });
-
-        return forumPage;
-    },
-
     async profile (req,res) {	
 
         const profile = await user.findAll({  
                 where: {
                     user_id: req.body.user_id,
-                },
-                include: [
-                    {
-                        model : post,
-                    }
-                ],
+                }
         });
 
         return profile;
@@ -533,7 +583,7 @@ const model = {
         const updateProfile = await user.update(
 
             {
-                class: req.body.class,
+                entry_year: req.body.entry_year,
                 department: req.body.department,
                 about: req.body.about,
             },            

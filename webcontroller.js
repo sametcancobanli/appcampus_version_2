@@ -28,7 +28,7 @@ const webcontroller = {
 						throw error.message
 				});;
 			var new_register = await model.check_register(req, res);
-			if (new_register.user_id > 0) {
+			if (new_register.mail != " ") {
                 var returnValue = {'status': true, "values":new_register};
 				res.send(returnValue);
 			} else {
@@ -334,8 +334,9 @@ const webcontroller = {
 			if (true) {
 				const token = req.headers.authorization.split(" ")[1]
         		var decoded = jwt_decode(token);
-				var profile = await model.profile(req, res, decoded);
-				var returnValue = {'status': true, "values":profile};
+				// var profile = await model.profile(req, res, decoded);
+				var forumPage_profile = await model.forum_profile(req, res, decoded);
+				var returnValue = {'status': true, "values":forumPage_profile};
 				res.send(returnValue);			
 			} else {
 				console.log("User not loggedin.");
