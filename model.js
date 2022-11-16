@@ -269,7 +269,7 @@ const model = {
 
         var off_set = 0;
         if(req.body.offset){
-            off_set = off_set + req.body.offset;
+            off_set = 5 * req.body.offset;
         }
 
         const forumPage = await post.findAll({  
@@ -307,7 +307,7 @@ const model = {
             group: ['post.post_id'],
             order: [['post_id', 'DESC']],
             offset: off_set, // set the offset according your use case
-            limit: 10  // limit the output
+            limit: 5  // limit the output
         });
 
         var returnVal = {
@@ -322,7 +322,7 @@ const model = {
 
         var off_set = 0;
         if(req.body.offset){
-            off_set = off_set + req.body.offset;
+            off_set = 5 * req.body.offset;
         }
 
         const forumPage_category = await post.findAll({  
@@ -362,7 +362,7 @@ const model = {
             group: ['post.post_id'],
             order: [['post_id', 'DESC']],
             offset: off_set, // set the offset according your use case
-            limit: 10  // limit the output
+            limit: 5  // limit the output
         });
         var returnVal = {
             "offset_info": off_set,
@@ -376,7 +376,7 @@ const model = {
 
         var off_set = 0;
         if(req.body.offset){
-            off_set = off_set + req.body.offset;
+            off_set = 5 * req.body.offset;
         }
 
         const forumPage_search = await post.findAll({  
@@ -418,7 +418,7 @@ const model = {
             group: ['post.post_id'],
             order: [['post_id', 'DESC']],
             offset: off_set, // set the offset according your use case
-            limit: 10  // limit the output
+            limit: 5  // limit the output
         });
 
         var returnVal = {
@@ -433,7 +433,7 @@ const model = {
 
         var off_set = 0;
         if(req.body.offset){
-            off_set = off_set + req.body.offset;
+            off_set = 5 * req.body.offset;
         }
         
         const profile = await user.findAll({  
@@ -480,7 +480,7 @@ const model = {
             group: ['post.post_id'],
             order: [['post_id', 'DESC']],
             offset: off_set, // set the offset according your use case
-            limit: 10  // limit the output
+            limit: 5  // limit the output
         });
         var returnVal = {
             "offset_info": off_set,
