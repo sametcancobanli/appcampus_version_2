@@ -311,7 +311,7 @@ const model = {
         });
 
         var returnVal = {
-            "offset_info": off_set,
+            "offset_info": off_set / 5,
             "posts":forumPage
         }
 
@@ -365,7 +365,7 @@ const model = {
             limit: 5  // limit the output
         });
         var returnVal = {
-            "offset_info": off_set,
+            "offset_info": off_set / 5,
             "posts":forumPage_category
         }
 
@@ -422,7 +422,7 @@ const model = {
         });
 
         var returnVal = {
-            "offset_info": off_set,
+            "offset_info": off_set / 5,
             "posts":forumPage_search
         }
 
@@ -483,7 +483,7 @@ const model = {
             limit: 5  // limit the output
         });
         var returnVal = {
-            "offset_info": off_set,
+            "offset_info": off_set / 5,
             "user_infos":profile,
             "user_posts":forumPage_profile
         }
