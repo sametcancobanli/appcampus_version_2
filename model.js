@@ -267,6 +267,11 @@ const model = {
     
     async forum (req,res, decoded) {	
 
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = off_set + req.body.offset;
+        }
+
         const forumPage = await post.findAll({  
 
             include: [
@@ -301,6 +306,8 @@ const model = {
             
             group: ['post.post_id'],
             order: [['post_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 10  // limit the output
         });
 
         return forumPage;
