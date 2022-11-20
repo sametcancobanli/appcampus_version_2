@@ -77,3 +77,43 @@ CREATE TABLE vote (
     FOREIGN KEY (post_id) REFERENCES post(post_id) ON DELETE CASCADE,
 	CONSTRAINT likes UNIQUE (user_id,post_id)
 );
+
+
+
+SELECT
+    UM.message_id,
+    UM.sender_id , UM.receiver_id,
+    UM.m_text, UM.creation_time,
+	user_1.name as sender_name, user_1.surname as sender_surname,
+    user_2.name as receiver_name, user_2.surname as receiver_surname
+FROM message AS UM
+
+INNER JOIN
+    (
+        SELECT
+            MAX(message_id) AS maxMessageID
+        FROM message
+        GROUP BY sender_id, receiver_id
+    ) IUM
+    ON UM.message_id = IUM.maxMessageID
+    
+INNER JOIN 
+	(
+		SELECT 
+			user_id, name, surname
+            FROM user
+	) user_1
+    ON UM.sender_id = user_1.user_id 
+    
+INNER JOIN 
+	(
+		SELECT 
+			user_id, name, surname
+            FROM user
+	) user_2
+    ON UM.receiver_id = user_2.user_id 
+
+
+WHERE UM.sender_id = 4 OR UM.receiver_id = 4
+GROUP BY UM.sender_id, UM.receiver_id
+ORDER BY UM.creation_time DESC
