@@ -409,6 +409,85 @@ const webcontroller = {
 		}
 	},
 
+	messagePage : async function(req, res){
+
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var messagePage = await model.message_page(req, res, decoded);
+				var returnValue = {'status': true, "values":messagePage};
+				res.send(returnValue);		
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	privMessagePage : async function(req, res){
+
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var privMessagePage = await model.priv_message_page(req, res, decoded);
+				var returnValue = {'status': true, "values":privMessagePage};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+	
+	newMessage : async function(req, res){
+
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var newMessage = await model.new_message(req, res, decoded);
+				var returnValue = {'status': true, "values":newMessage};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	notificationPage : async function(req, res){
+
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var notificationPage = await model.notification_page(req, res, decoded);
+				var returnValue = {'status': true, "values":notificationPage};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
 
 	//////////////////////////////////////////
 

@@ -53,6 +53,11 @@ app.post("/webservice/updateprofile", checkJwt, webcontroller.updateProfile);
 app.post("/webservice/deletepost", checkJwt, webcontroller.deletePost);
 app.post("/webservice/deletecomment", checkJwt, webcontroller.deleteComment);
 
+app.post("/webservice/messagepage", checkJwt, webcontroller.messagePage);
+app.post("/webservice/privmessagepage", checkJwt, webcontroller.privMessagePage);
+app.post("/webservice/newmessage", checkJwt, webcontroller.newMessage);
+
+app.post("/webservice/notificationpage", checkJwt, webcontroller.notificationPage);
 /////////////////////////////////////////////
 
 app.post("/webservice/allpost", checkJwt, webcontroller.allPost);

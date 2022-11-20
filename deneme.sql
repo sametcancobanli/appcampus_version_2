@@ -5,6 +5,28 @@ SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 CREATE DATABASE IF NOT EXISTS `uni_media` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `uni_media`;
 
+CREATE TABLE notification (
+    notification_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    type VARCHAR(20),
+    content_id INT NOT NULL,
+    creation_time TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES user(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES user(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (content_id) REFERENCES post(post_id) ON DELETE CASCADE
+);
+
+CREATE TABLE message (
+    message_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    m_text TEXT,
+    creation_time TIMESTAMP,
+    FOREIGN KEY (sender_id) REFERENCES user(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES user(user_id) ON DELETE CASCADE
+);
+
 CREATE TABLE user (
     user_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     mail VARCHAR(50) NOT NULL,
