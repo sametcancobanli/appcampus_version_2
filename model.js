@@ -10,6 +10,7 @@ options = { multi: true };
 const moment = require('moment-timezone');
 const { DataTypes } = require("sequelize");
 const sequelize = require('sequelize');
+const { QueryTypes } = require('sequelize');
 
 
 var mysql = require('mysql');
@@ -180,9 +181,19 @@ const message = db.define('message', {
     },
     sender_id: {
         type: Sequelize.INTEGER,
+        references: {
+            model: 'user',
+            key: 'user_id',
+            as: 'sender_id',
+        }
     },
     receiver_id: {
         type: Sequelize.INTEGER,
+        references: {
+            model: 'user',
+            key: 'user_id',
+            as: 'receiverId',
+        }
     },
     m_text: {
         type: Sequelize.TEXT,
@@ -749,34 +760,8 @@ const model = {
     },
 
     async message_page (req,res, decoded) {	
-
-        const messagePage = await message.findAll({  
-            where:{
-                [Op.or]: [
-                    { 
-                        receiver_id : decoded.user_id, 
-                    },
-                    { 
-                        sender_id : decoded.user_id, 
-                    }
-                ],
-            },
-
-            attributes:['sender_id', 'receiver_id'],
-            include:[{
-               
-                model:user,
-                attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-
-            }],
-            
-
-            group: ['sender_id','receiver_id'],
-            order: [['message_id', 'DESC']],
-        });
-
+        const messagePage = await db.query("SELECT UM.message_id, UM.sender_id , UM.receiver_id, UM.m_text, UM.creation_time, user_1.name as sender_name, user_1.surname as sender_surname, user_2.name as receiver_name, user_2.surname as receiver_surname FROM message AS UM INNER JOIN( SELECT MAX(message_id) AS maxMessageID FROM message GROUP BY sender_id, receiver_id ) IUM ON UM.message_id = IUM.maxMessageID INNER JOIN  ( SELECT  user_id, name, surname FROM user ) user_1 ON UM.sender_id = user_1.user_id  INNER JOIN ( SELECT  user_id, name, surname FROM user ) user_2 ON UM.receiver_id = user_2.user_id WHERE UM.sender_id = '" + decoded.user_id + "' OR UM.receiver_id = '" + decoded.user_id + "' GROUP BY UM.sender_id, UM.receiver_id ORDER BY UM.creation_time DESC", { type: QueryTypes.SELECT });
         return messagePage;
-        
     },
 
     async priv_message_page (req,res, decoded) {	
@@ -928,3 +913,4 @@ const model = {
 }
 
 module.exports = model;
+
