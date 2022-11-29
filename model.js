@@ -214,10 +214,10 @@ const notification = db.define('notification', {
         type: Sequelize.INTEGER,
         primaryKey: true,
     },
-    sender_id: {
+    receiver_id: {
         type: Sequelize.INTEGER,
     },
-    receiver_id: {
+    sender_id: {
         type: Sequelize.INTEGER,
     },
     type: {
@@ -311,18 +311,18 @@ user.hasMany(notification, {
     foreignKey: 'sender_id',
     onDelete: 'cascade',
     hooks:true })
-user.hasMany(notification, {
-    foreignKey: 'receiver_id',
-    onDelete: 'cascade',
-    hooks:true })
+// user.hasMany(notification, {
+//     foreignKey: 'receiver_id',
+//     onDelete: 'cascade',
+//     hooks:true })
 notification.belongsTo(user, {
     foreignKey: 'sender_id',
     onDelete: 'cascade',
     hooks:true })
-notification.belongsTo(user, {
-    foreignKey: 'receiver_id',
-    onDelete: 'cascade',
-    hooks:true })
+// notification.belongsTo(user, {
+//     foreignKey: 'receiver_id',
+//     onDelete: 'cascade',
+//     hooks:true })
 
 
 post.hasMany(notification, {
@@ -820,19 +820,20 @@ const model = {
                 ],
             },
 
+
             include: [
                 {
                     model : user,
-                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname'],
+                                  [Sequelize.fn('COUNT', Sequelize.col('content_id')), 'total_reaction']],
 
                 },
                 {
                     model : post,
-
                 },
             ],
-
-            order: [['notification_id', 'DESC']],
+            group: [['content_id'],['type']],
+            order: [['creation_time', 'DESC']],
 
         });
 
