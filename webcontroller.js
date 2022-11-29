@@ -132,10 +132,10 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage = await model.forum(req, res, decoded);
 
-				for (let i = 0; i < forumPage.length; i++) {
-					for (let j = 0; j < forumPage[i].votes.length; j++) {
-						if(forumPage[i].votes[j].user_id == decoded.user_id){
-							forumPage[i].user.dataValues.itsliked = "yes";
+				for (let i = 0; i < forumPage.posts.length; i++) {
+					for (let j = 0; j < forumPage.posts[i].votes.length; j++) {
+						if(forumPage.posts[i].votes[j].user_id == decoded.user_id){
+							forumPage.posts[i].dataValues.user.dataValues.itsliked = "yes";
 							break;
 						}
 					}
@@ -161,10 +161,10 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage_category = await model.forum_category(req, res, decoded);
 
-				for (let i = 0; i < forumPage_category.length; i++) {
-					for (let j = 0; j < forumPage_category[i].votes.length; j++) {
-						if(forumPage_category[i].votes[j].user_id == decoded.user_id){
-							forumPage_category[i].user.dataValues.itsliked = "yes";
+				for (let i = 0; i < forumPage_category.posts.length; i++) {
+					for (let j = 0; j < forumPage_category.posts[i].votes.length; j++) {
+						if(forumPage_category.posts[i].votes[j].user_id == decoded.user_id){
+							forumPage_category.posts[i].dataValues.user.dataValues.itsliked = "yes";
 							break;
 						}
 					}
@@ -190,10 +190,10 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage_search = await model.forum_search(req, res, decoded);
 
-				for (let i = 0; i < forumPage_search.length; i++) {
-					for (let j = 0; j < forumPage_search[i].votes.length; j++) {
-						if(forumPage_search[i].votes[j].user_id == decoded.user_id){
-							forumPage_search[i].user.dataValues.itsliked = "yes";
+				for (let i = 0; i < forumPage_search.posts.length; i++) {
+					for (let j = 0; j < forumPage_search.posts[i].votes.length; j++) {
+						if(forumPage_search.posts[i].votes[j].user_id == decoded.user_id){
+							forumPage_search.posts[i].dataValues.user.dataValues.itsliked = "yes";
 							break;
 						}
 					}

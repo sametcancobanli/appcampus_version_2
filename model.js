@@ -13,14 +13,14 @@ const sequelize = require('sequelize');
 const { QueryTypes } = require('sequelize');
 
 
-var mysql = require('mysql');
+// var mysql = require('mysql');
 
-var con = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "penguen123",
-  database: "uni_media"
-});
+// var con = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "penguen123",
+//   database: "uni_media"
+// });
 // connect db
 const db = new Sequelize("uni_media", "root", "penguen123", {
     host: 'localhost',
@@ -157,6 +157,7 @@ const vote = db.define('vote', {
     vote_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
     },
     post_id: {
         type: Sequelize.INTEGER,
