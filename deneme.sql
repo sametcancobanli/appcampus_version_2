@@ -1,6 +1,8 @@
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'penguen123';​
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'penguen123';;
 
 SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+
+SET FOREIGN_KEY_CHECKS=0;
 
 CREATE DATABASE IF NOT EXISTS `uni_media` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `uni_media`;
@@ -10,11 +12,15 @@ CREATE TABLE notification (
     sender_id INT NOT NULL,
     receiver_id INT NOT NULL,
     type VARCHAR(20),
-    content_id INT NOT NULL,
+    post_id INT NOT NULL,
+    comment_id INT DEFAULT(0),
+    vote_id INT DEFAULT(0),
     creation_time TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES user(user_id) ON DELETE CASCADE,
     FOREIGN KEY (receiver_id) REFERENCES user(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (content_id) REFERENCES post(post_id) ON DELETE CASCADE
+    FOREIGN KEY (post_id) REFERENCES post(post_id),
+    FOREIGN KEY (comment_id) REFERENCES comment(comment_id),
+	FOREIGN KEY (vote_id) REFERENCES vote(vote_id)
 );
 
 CREATE TABLE message (
@@ -116,4 +122,53 @@ INNER JOIN
 
 WHERE UM.sender_id = 4 OR UM.receiver_id = 4
 GROUP BY UM.sender_id, UM.receiver_id
-ORDER BY UM.creation_time DESC
+ORDER BY UM.creation_time DESC;
+
+
+SELECT
+    UX.notification_id,
+    UX.sender_id , UX.receiver_id,
+    UX.type, UX.post_id, UX.creation_time,
+    comments.c_text as text,
+	user_1.name as sender_name, user_1.surname as sender_surname,
+    RX.total_reaction as total_reaction
+FROM notification AS UX
+
+INNER JOIN
+    (
+        SELECT
+            MAX(notification_id) AS maxNotificationID
+        FROM notification
+        GROUP BY post_id, type
+    ) IUX
+    ON UX.notification_id = IUX.maxNotificationID
+    
+INNER JOIN
+    (
+        SELECT
+            COUNT(post_id) AS total_reaction, post_id, type
+        FROM notification
+        GROUP BY post_id, type
+    ) RX
+    ON UX.post_id = RX.post_id
+    
+INNER JOIN 
+	(
+		SELECT 
+			user_id, name, surname
+            FROM user
+	) user_1
+ON UX.sender_id = user_1.user_id 
+
+INNER JOIN 
+	(
+		SELECT 
+			c_text
+            FROM comment
+	) comments
+	ON RX.type = 'comment'
+
+WHERE UX.receiver_id = 4
+GROUP BY notification_id
+ORDER BY UX.creation_time DESC
+

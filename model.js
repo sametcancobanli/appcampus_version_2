@@ -223,8 +223,16 @@ const notification = db.define('notification', {
     type: {
         type: Sequelize.STRING(20),
     },
-    content_id: {
+    post_id: {
         type: Sequelize.INTEGER,
+    },
+    // comment_id: {
+    //     type: Sequelize.INTEGER,
+    //     defaultValue : 0,
+    // },
+    vote_id: {
+        type: Sequelize.INTEGER,
+        defaultValue : 0,
     },
     creation_time: {
         type: DataTypes.DATE,
@@ -311,28 +319,27 @@ user.hasMany(notification, {
     foreignKey: 'sender_id',
     onDelete: 'cascade',
     hooks:true })
-// user.hasMany(notification, {
-//     foreignKey: 'receiver_id',
-//     onDelete: 'cascade',
-//     hooks:true })
+user.hasMany(notification, {
+    foreignKey: 'receiver_id',
+    onDelete: 'cascade',
+    hooks:true })
 notification.belongsTo(user, {
     foreignKey: 'sender_id',
     onDelete: 'cascade',
     hooks:true })
-// notification.belongsTo(user, {
-//     foreignKey: 'receiver_id',
-//     onDelete: 'cascade',
-//     hooks:true })
-
-
+notification.belongsTo(user, {
+    foreignKey: 'receiver_id',
+    onDelete: 'cascade',
+    hooks:true })
 post.hasMany(notification, {
-    foreignKey: 'content_id',
+    foreignKey: 'post_id',
     onDelete: 'cascade',
     hooks:true })
 notification.belongsTo(post, {
-    foreignKey: 'content_id',
+    foreignKey: 'post_id',
     onDelete: 'cascade',
     hooks:true })
+
 
 const model = {
 
@@ -615,8 +622,8 @@ const model = {
             sender_id: decoded.user_id,
             receiver_id: req.body.user_id,
             type: 'like',
-            content_id: req.body.post_id,
-            raw: true,
+            post_id: req.body.post_id,
+            vote_id : likePost.dataValues.vote_id,
         });
 
         var returnVal = {
@@ -666,7 +673,8 @@ const model = {
             sender_id: decoded.user_id,
             receiver_id: req.body.user_id,
             type: 'comment',
-            content_id: req.body.post_id,
+            post_id: req.body.post_id,
+            comment_id : newComment.comment_id,
             raw: true,
         });
 
@@ -811,32 +819,7 @@ const model = {
 
     async notification_page (req,res, decoded) {	
 
-        const notificationPage = await notification.findAll({  
-            where:{
-                [Op.or]: [
-                    { 
-                        receiver_id : decoded.user_id, 
-                    },
-                ],
-            },
-
-
-            include: [
-                {
-                    model : user,
-                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname'],
-                                  [Sequelize.fn('COUNT', Sequelize.col('content_id')), 'total_reaction']],
-
-                },
-                {
-                    model : post,
-                },
-            ],
-            group: [['content_id'],['type']],
-            order: [['creation_time', 'DESC']],
-
-        });
-
+        const notificationPage = await db.query("SELECT UX.notification_id, UX.sender_id , UX.receiver_id, UX.type, UX.post_id, UX.creation_time, comments.c_text as text, user_1.name as sender_name, user_1.surname as sender_surname, RX.total_reaction as total_reaction FROM notification AS UX INNER JOIN (SELECT MAX(notification_id) AS maxNotificationID FROM notification GROUP BY post_id, type ) IUX ON UX.notification_id = IUX.maxNotificationID INNER JOIN (SELECT COUNT(post_id) AS total_reaction, post_id, type FROM notification GROUP BY post_id, type ) RX ON UX.post_id = RX.post_id INNER JOIN (SELECT user_id, name, surname FROM user) user_1 ON UX.sender_id = user_1.user_id  INNER JOIN  ( SELECT  c_text FROM comment ) comments ON RX.type = 'comment' WHERE UX.receiver_id = 4 GROUP BY notification_id ORDER BY UX.creation_time DESC", { type: QueryTypes.SELECT });
         return notificationPage;
     },
 
@@ -915,4 +898,3 @@ const model = {
 }
 
 module.exports = model;
-
