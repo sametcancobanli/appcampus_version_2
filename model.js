@@ -397,7 +397,7 @@ const model = {
             include: [
                 {
                     model : user,
-                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                    attributes : ['photo', [Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
 
                 },
                 {
@@ -452,7 +452,7 @@ const model = {
             include: [
                 {
                     model : user,
-                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                    attributes : ['photo',[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
 
                 },
                 {
@@ -508,7 +508,7 @@ const model = {
             include: [
                 {
                     model : user,
-                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                    attributes : ['photo',[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
 
                 },
                 {
