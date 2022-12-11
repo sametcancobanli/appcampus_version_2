@@ -686,20 +686,6 @@ const model = {
         return returnVal;
     },
 
-    async add_photo (req,res,decoded) {	
-
-        return addPhoto = await user.update(
-            {
-                photo: req.body.photo,
-            },
-            {
-                where:{ 
-                    user_id: decoded.user_id 
-                },
-            }
-        );
-    },
-
     async categories (req,res,decoded) {	
 
         const categories = await category.findAll({

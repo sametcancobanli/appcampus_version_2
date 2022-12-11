@@ -290,25 +290,6 @@ const webcontroller = {
 		}
 	},
 
-	addPhoto : async function(req, res){
-		try {
-			if (true) {
-				const token = req.headers.authorization.split(" ")[1]
-        		var decoded = jwt_decode(token);
-				var addPhoto = await model.add_photo(req, res, decoded);
-				var returnValue = {'status': true, "values":addPhoto};
-				res.send(returnValue);			
-			} else {
-				console.log("User not loggedin.");
-				throw 'User not loggedin.';
-			}	
-		} catch (error) {
-			console.log(error);
-			var returnValue = {'status': false, "error": error};
-			res.send(returnValue);
-		}
-	},
-
 	categories : async function(req, res){
 		try {
 			if (true) {
