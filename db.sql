@@ -67,6 +67,7 @@ CREATE TABLE post (
     p_text VARCHAR(140) NOT NULL,
     p_vote INT NOT NULL,
     creation_time TIMESTAMP,
+    photo LONGTEXT,
     FOREIGN KEY (user_id) REFERENCES user(user_id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES category(category_id) ON DELETE CASCADE
 );
