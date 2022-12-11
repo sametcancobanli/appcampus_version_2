@@ -732,6 +732,7 @@ const model = {
         const updateProfile = await user.update(
 
             {
+                photo: req.body.photo,
                 entry_year: req.body.entry_year,
                 department: req.body.department,
                 about: req.body.about,
