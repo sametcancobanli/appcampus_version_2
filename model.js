@@ -44,6 +44,22 @@ db.authenticate()
   .then(() => console.log('Database connected...'))
   .catch(err => console.log('Error: ' + err))
 ////////////////////////////////////////
+const string_map = db.define('string_map', {
+    language_text: {
+        type: Sequelize.STRING(50),
+        primaryKey: true
+    },
+    key_text: {
+        type: Sequelize.STRING(50),
+    },
+    text: {
+        type: Sequelize.STRING(50)
+    }
+});
+// category.sync().then(() => {
+//     console.log('string_map table created');
+// });
+
 const user = db.define('user', {
     user_id: {
         type: Sequelize.INTEGER,
@@ -343,6 +359,18 @@ notification.belongsTo(post, {
 
 const model = {
 
+    async string_map(req,res) {
+
+        const string_map_values = await string_map.findAll({
+            raw: true,
+            where: {
+                language_text: req.body.language_text
+            },
+        });
+
+        return string_map_values;
+    },
+
     async check_login(req,res) {
 
         const new_login = await user.findAll({
@@ -564,7 +592,7 @@ const model = {
 
         const forumPage_profile = await post.findAll({  
             where: {
-                user_id : decoded.user_id
+                user_id : req.body.user_id
 
             },
             include: [

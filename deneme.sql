@@ -7,6 +7,13 @@ SET FOREIGN_KEY_CHECKS=0;
 CREATE DATABASE IF NOT EXISTS `uni_media` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `uni_media`;
 
+CREATE TABLE string_map (
+	language_text VARCHAR(50),
+    key_text VARCHAR(50),
+    text VARCHAR(50),
+    CONSTRAINT map UNIQUE (language_text,key_text)
+);
+
 CREATE TABLE notification (
     notification_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     sender_id INT NOT NULL,

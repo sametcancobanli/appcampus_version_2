@@ -57,6 +57,8 @@ app.post("/webservice/privmessagepage", checkJwt, webcontroller.privMessagePage)
 app.post("/webservice/newmessage", checkJwt, webcontroller.newMessage);
 
 app.post("/webservice/notificationpage", checkJwt, webcontroller.notificationPage);
+
+app.post("/webservice/map", checkJwt, webcontroller.stringMap);
 /////////////////////////////////////////////
 
 app.post("/webservice/allpost", checkJwt, webcontroller.allPost);
