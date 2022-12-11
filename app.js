@@ -24,8 +24,8 @@ const firebaseConfig = {
 // Initialize Firebase
 const app_firebase = firebase.initializeApp(firebaseConfig);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended : true}));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 ////////////// routes //////////////////
 const webcontroller = require('./webcontroller');
@@ -66,7 +66,7 @@ app.post("/webservice/countcategory", checkJwt , webcontroller.countCategory);
 
 ///////////// setting port /////////////
 app.listen(3000, function(){
-    console.log("Listening port number : 3000")
+  console.log("Listening port number : 3000")
 });
 ////////////////////////////////////////
 
