@@ -816,7 +816,7 @@ const model = {
             include: [
                 {
                     model : user,
-                    attributes : ['photo', [Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
 
                 },
             ],

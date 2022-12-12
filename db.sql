@@ -129,7 +129,8 @@ INNER JOIN
 
 
 WHERE UM.sender_id = 4 OR UM.receiver_id = 4
-GROUP BY UM.sender_id, UM.receiver_id
+GROUP BY IF(UM.sender_id > UM.receiver_id, UM.sender_id,UM.receiver_id),
+         IF(UM.receiver_id > UM.sender_id, UM.receiver_id,UM.sender_id)
 ORDER BY UM.creation_time DESC;
 
 ------------------------------------------------------------
