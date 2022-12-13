@@ -828,7 +828,12 @@ const model = {
 
         });
 
-        return privMessagePage;
+        var returnVal = {
+            "offset_info": off_set / 10,
+            "messages":privMessagePage
+        }
+
+        return returnVal;
     },
 
     async new_message (req,res, decoded) {	
