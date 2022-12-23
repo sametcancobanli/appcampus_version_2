@@ -1,4 +1,4 @@
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'penguen123';;
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'penguen123';
 
 SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
@@ -107,7 +107,8 @@ INNER JOIN
         SELECT
             MAX(message_id) AS maxMessageID
         FROM message
-        GROUP BY sender_id, receiver_id
+        GROUP BY IF(sender_id > receiver_id, sender_id, receiver_id),
+                 IF(receiver_id > sender_id, receiver_id, sender_id)
     ) IUM
     ON UM.message_id = IUM.maxMessageID
     
@@ -129,8 +130,6 @@ INNER JOIN
 
 
 WHERE UM.sender_id = 4 OR UM.receiver_id = 4
-GROUP BY IF(UM.sender_id > UM.receiver_id, UM.sender_id,UM.receiver_id),
-         IF(UM.receiver_id > UM.sender_id, UM.receiver_id,UM.sender_id)
 ORDER BY UM.creation_time DESC;
 
 ------------------------------------------------------------
