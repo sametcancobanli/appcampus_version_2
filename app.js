@@ -24,8 +24,8 @@ const firebaseConfig = {
 // Initialize Firebase
 const app_firebase = firebase.initializeApp(firebaseConfig);
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended : true}));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 
 ////////////// routes //////////////////
 const webcontroller = require('./webcontroller');
@@ -45,7 +45,6 @@ app.post("/webservice/likepost", checkJwt, webcontroller.likePost);
 app.post("/webservice/dislikepost", checkJwt, webcontroller.dislikePost);
 app.post("/webservice/newpost", checkJwt, webcontroller.newPost);
 app.post("/webservice/newcomment", checkJwt, webcontroller.newComment);
-app.post("/webservice/addphoto", checkJwt, webcontroller.addPhoto);
 
 app.post("/webservice/profile", checkJwt, webcontroller.profile);
 app.post("/webservice/updateprofile", checkJwt, webcontroller.updateProfile);
@@ -53,6 +52,13 @@ app.post("/webservice/updateprofile", checkJwt, webcontroller.updateProfile);
 app.post("/webservice/deletepost", checkJwt, webcontroller.deletePost);
 app.post("/webservice/deletecomment", checkJwt, webcontroller.deleteComment);
 
+app.post("/webservice/messagepage", checkJwt, webcontroller.messagePage);
+app.post("/webservice/privmessagepage", checkJwt, webcontroller.privMessagePage);
+app.post("/webservice/newmessage", checkJwt, webcontroller.newMessage);
+
+app.post("/webservice/notificationpage", checkJwt, webcontroller.notificationPage);
+
+app.post("/webservice/map", checkJwt, webcontroller.stringMap);
 /////////////////////////////////////////////
 
 app.post("/webservice/allpost", checkJwt, webcontroller.allPost);
@@ -62,7 +68,7 @@ app.post("/webservice/countcategory", checkJwt , webcontroller.countCategory);
 
 ///////////// setting port /////////////
 app.listen(3000, function(){
-    console.log("Listening port number : 3000")
+  console.log("Listening port number : 3000")
 });
 ////////////////////////////////////////
 

@@ -10,7 +10,17 @@ options = { multi: true };
 const moment = require('moment-timezone');
 const { DataTypes } = require("sequelize");
 const sequelize = require('sequelize');
+const { QueryTypes } = require('sequelize');
 
+
+// var mysql = require('mysql');
+
+// var con = mysql.createConnection({
+//   host: "localhost",
+//   user: "root",
+//   password: "penguen123",
+//   database: "uni_media"
+// });
 // connect db
 const db = new Sequelize("uni_media", "root", "penguen123", {
     host: 'localhost',
@@ -34,6 +44,22 @@ db.authenticate()
   .then(() => console.log('Database connected...'))
   .catch(err => console.log('Error: ' + err))
 ////////////////////////////////////////
+const string_map = db.define('string_map', {
+    language_text: {
+        type: Sequelize.STRING(50),
+        primaryKey: true
+    },
+    key_text: {
+        type: Sequelize.STRING(50),
+    },
+    text: {
+        type: Sequelize.STRING(50)
+    }
+});
+// category.sync().then(() => {
+//     console.log('string_map table created');
+// });
+
 const user = db.define('user', {
     user_id: {
         type: Sequelize.INTEGER,
@@ -65,9 +91,6 @@ const user = db.define('user', {
     },
     isConfirmed: {
         type: Sequelize.INTEGER
-    },
-    isConfirmed: {
-        type: Sequelize.STRING(8000)
     },
     photo: {
         type: Sequelize.TEXT,
@@ -108,6 +131,9 @@ const post = db.define('post', {
     },
     category_id: {
         type: Sequelize.INTEGER
+    },
+    photo: {
+        type: Sequelize.TEXT
     },
     p_vote: {
         type: Sequelize.INTEGER
@@ -150,6 +176,7 @@ const vote = db.define('vote', {
     vote_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
+        autoIncrement: true,
     },
     post_id: {
         type: Sequelize.INTEGER,
@@ -165,6 +192,75 @@ const vote = db.define('vote', {
 });
 // vote.sync().then(() => {
 //     console.log('vote table created');
+// });
+
+const message = db.define('message', {
+    message_id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+    },
+    sender_id: {
+        type: Sequelize.INTEGER,
+        references: {
+            model: 'user',
+            key: 'user_id',
+            as: 'sender_id',
+        }
+    },
+    receiver_id: {
+        type: Sequelize.INTEGER,
+        references: {
+            model: 'user',
+            key: 'user_id',
+            as: 'receiverId',
+        }
+    },
+    m_text: {
+        type: Sequelize.TEXT,
+    },
+    creation_time: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        allowNull: false,
+    },
+});
+// message.sync().then(() => {
+//     console.log('message table created');
+// });
+
+const notification = db.define('notification', {
+    notification_id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+    },
+    receiver_id: {
+        type: Sequelize.INTEGER,
+    },
+    sender_id: {
+        type: Sequelize.INTEGER,
+    },
+    type: {
+        type: Sequelize.STRING(20),
+    },
+    post_id: {
+        type: Sequelize.INTEGER,
+    },
+    // comment_id: {
+    //     type: Sequelize.INTEGER,
+    //     defaultValue : 0,
+    // },
+    vote_id: {
+        type: Sequelize.INTEGER,
+        defaultValue : 0,
+    },
+    creation_time: {
+        type: DataTypes.DATE,
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+        allowNull: false,
+    },
+});
+// notification.sync().then(() => {
+//     console.log('notification table created');
 // });
 
 user.hasMany(post, {
@@ -221,7 +317,62 @@ post.belongsTo(category, {
     onDelete: 'cascade',
     hooks:true })
 
+user.hasMany(message, {
+    foreignKey: 'sender_id',
+    onDelete: 'cascade',
+    hooks:true })
+user.hasMany(message, {
+    foreignKey: 'receiver_id',
+    onDelete: 'cascade',
+    hooks:true })
+message.belongsTo(user, {
+    foreignKey: 'sender_id',
+    onDelete: 'cascade',
+    hooks:true })
+message.belongsTo(user, {
+    foreignKey: 'receiver_id',
+    onDelete: 'cascade',
+    hooks:true })
+
+user.hasMany(notification, {
+    foreignKey: 'sender_id',
+    onDelete: 'cascade',
+    hooks:true })
+user.hasMany(notification, {
+    foreignKey: 'receiver_id',
+    onDelete: 'cascade',
+    hooks:true })
+notification.belongsTo(user, {
+    foreignKey: 'sender_id',
+    onDelete: 'cascade',
+    hooks:true })
+notification.belongsTo(user, {
+    foreignKey: 'receiver_id',
+    onDelete: 'cascade',
+    hooks:true })
+post.hasMany(notification, {
+    foreignKey: 'post_id',
+    onDelete: 'cascade',
+    hooks:true })
+notification.belongsTo(post, {
+    foreignKey: 'post_id',
+    onDelete: 'cascade',
+    hooks:true })
+
+
 const model = {
+
+    async string_map(req,res) {
+
+        const string_map_values = await string_map.findAll({
+            raw: true,
+            where: {
+                language_text: req.body.language_text
+            },
+        });
+
+        return string_map_values;
+    },
 
     async check_login(req,res) {
 
@@ -277,7 +428,7 @@ const model = {
             include: [
                 {
                     model : user,
-                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                    attributes : ['photo', [Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
 
                 },
                 {
@@ -311,7 +462,7 @@ const model = {
         });
 
         var returnVal = {
-            "offset_info": off_set,
+            "offset_info": off_set / 5,
             "posts":forumPage
         }
 
@@ -332,7 +483,7 @@ const model = {
             include: [
                 {
                     model : user,
-                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                    attributes : ['photo',[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
 
                 },
                 {
@@ -365,7 +516,7 @@ const model = {
             limit: 5  // limit the output
         });
         var returnVal = {
-            "offset_info": off_set,
+            "offset_info": off_set / 5,
             "posts":forumPage_category
         }
 
@@ -388,7 +539,7 @@ const model = {
             include: [
                 {
                     model : user,
-                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+                    attributes : ['photo',[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
 
                 },
                 {
@@ -422,7 +573,7 @@ const model = {
         });
 
         var returnVal = {
-            "offset_info": off_set,
+            "offset_info": off_set / 5,
             "posts":forumPage_search
         }
 
@@ -444,7 +595,7 @@ const model = {
 
         const forumPage_profile = await post.findAll({  
             where: {
-                user_id : decoded.user_id
+                user_id : req.body.user_id
 
             },
             include: [
@@ -483,7 +634,7 @@ const model = {
             limit: 5  // limit the output
         });
         var returnVal = {
-            "offset_info": off_set,
+            "offset_info": off_set / 5,
             "user_infos":profile,
             "user_posts":forumPage_profile
         }
@@ -493,10 +644,25 @@ const model = {
 
     async like_post (req,res, decoded) {
 
-        return likePost = await vote.create({
+        const likePost = await vote.create({
             user_id: decoded.user_id,
             post_id: req.body.post_id,
         });   
+
+        const newNotification = await notification.create({
+            sender_id: decoded.user_id,
+            receiver_id: req.body.user_id,
+            type: 'like',
+            post_id: req.body.post_id,
+            vote_id : likePost.dataValues.vote_id,
+        });
+
+        var returnVal = {
+            "newLike":likePost,
+            "newNotification":newNotification
+        }
+
+        return returnVal;
     },
 
     async dislike_post (req,res, decoded) {	
@@ -518,6 +684,7 @@ const model = {
             user_id: decoded.user_id,
             p_text: req.body.p_text,
             category_id: req.body.category_id,
+            photo : req.body.photo,
             p_vote: 0,
             raw: true,
         });
@@ -534,21 +701,21 @@ const model = {
             raw: true,
         });
 
-        return newComment;
-    },
+        const newNotification = await notification.create({
+            sender_id: decoded.user_id,
+            receiver_id: req.body.user_id,
+            type: 'comment',
+            post_id: req.body.post_id,
+            comment_id : newComment.comment_id,
+            raw: true,
+        });
 
-    async add_photo (req,res,decoded) {	
+        var returnVal = {
+            "newCommment":newComment,
+            "newNotification":newNotification
+        }
 
-        return addPhoto = await user.update(
-            {
-                photo: req.body.photo,
-            },
-            {
-                where:{ 
-                    user_id: decoded.user_id 
-                },
-            }
-        );
+        return returnVal;
     },
 
     async categories (req,res,decoded) {	
@@ -583,6 +750,7 @@ const model = {
         const updateProfile = await user.update(
 
             {
+                photo: req.body.photo,
                 entry_year: req.body.entry_year,
                 department: req.body.department,
                 about: req.body.about,
@@ -617,6 +785,74 @@ const model = {
         });
 
         return deleteComment;
+    },
+
+    async message_page (req,res, decoded) {	
+        const messagePage = await db.query("SELECT UM.message_id, UM.sender_id , UM.receiver_id, UM.m_text, UM.creation_time, user_1.name as sender_name, user_1.surname as sender_surname, user_1.photo as sender_photo, user_2.name as receiver_name, user_2.surname as receiver_surname, user_2.photo as receiver_photo FROM message AS UM INNER JOIN( SELECT MAX(message_id) AS maxMessageID FROM message GROUP BY sender_id, receiver_id ) IUM ON UM.message_id = IUM.maxMessageID INNER JOIN  ( SELECT  user_id, name, surname,photo FROM user ) user_1 ON UM.sender_id = user_1.user_id  INNER JOIN ( SELECT  user_id, name, surname,photo FROM user ) user_2 ON UM.receiver_id = user_2.user_id WHERE UM.sender_id = '" + decoded.user_id + "' OR UM.receiver_id = '" + decoded.user_id + "' GROUP BY IF(UM.sender_id > UM.receiver_id, UM.sender_id,UM.receiver_id), IF(UM.receiver_id > UM.sender_id, UM.receiver_id,UM.sender_id) ORDER BY UM.creation_time DESC", { type: QueryTypes.SELECT });
+        return messagePage;
+    },
+
+    async priv_message_page (req,res, decoded) {	
+
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = 10 * req.body.offset;
+        }
+
+        const privMessagePage = await message.findAll({  
+            where:{
+                [Op.or]: [
+                    {   
+                        sender_id : decoded.user_id,
+                        receiver_id : req.body.receiver_id, 
+                    },
+                    { 
+                        sender_id : req.body.receiver_id,
+                        receiver_id : decoded.user_id, 
+                    }
+                  ]
+            },
+
+            include: [
+                {
+                    model : user,
+                    attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+
+                },
+            ],
+
+            group: ['message.message_id'],
+            order: [['message_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 10  // limit the output
+
+        });
+
+        var returnVal = {
+            "offset_info": off_set / 10,
+            "messages":privMessagePage
+        }
+
+        return returnVal;
+    },
+
+    async new_message (req,res, decoded) {	
+
+        const newMessage = await message.create({  
+            sender_id : decoded.user_id,
+            receiver_id : req.body.receiver_id,
+            m_text : req.body.m_text,
+            raw: true,
+
+        });
+
+        return newMessage;
+    },
+
+    async notification_page (req,res, decoded) {	
+
+        const notificationPage = await db.query("SELECT UX.notification_id, UX.sender_id , UX.receiver_id, UX.type, UX.post_id, UX.creation_time, comments.c_text as text, user_1.name as sender_name, user_1.surname as sender_surname, RX.total_reaction as total_reaction FROM notification AS UX INNER JOIN (SELECT MAX(notification_id) AS maxNotificationID FROM notification GROUP BY post_id, type ) IUX ON UX.notification_id = IUX.maxNotificationID INNER JOIN (SELECT COUNT(post_id) AS total_reaction, post_id, type FROM notification GROUP BY post_id, type ) RX ON UX.post_id = RX.post_id INNER JOIN (SELECT user_id, name, surname FROM user) user_1 ON UX.sender_id = user_1.user_id  INNER JOIN  ( SELECT  c_text FROM comment ) comments ON RX.type = 'comment' WHERE UX.receiver_id = 4 GROUP BY notification_id ORDER BY UX.creation_time DESC", { type: QueryTypes.SELECT });
+        return notificationPage;
     },
 
 // lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll

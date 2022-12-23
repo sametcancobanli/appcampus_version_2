@@ -10,6 +10,25 @@ require("firebase/compat/auth");
 
 const webcontroller = {	
 
+	stringMap : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var stringMap = await model.string_map(req, res, decoded);
+				var returnValue = {'status': true, "values":stringMap};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},	
+
 	registerService : async function(req, res){
         try {
 			await firebase.auth().createUserWithEmailAndPassword(req.body.mail, req.body.password)
@@ -132,10 +151,10 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage = await model.forum(req, res, decoded);
 
-				for (let i = 0; i < forumPage.length; i++) {
-					for (let j = 0; j < forumPage[i].votes.length; j++) {
-						if(forumPage[i].votes[j].user_id == decoded.user_id){
-							forumPage[i].user.dataValues.itsliked = "yes";
+				for (let i = 0; i < forumPage.posts.length; i++) {
+					for (let j = 0; j < forumPage.posts[i].votes.length; j++) {
+						if(forumPage.posts[i].votes[j].user_id == decoded.user_id){
+							forumPage.posts[i].dataValues.user.dataValues.itsliked = "yes";
 							break;
 						}
 					}
@@ -161,10 +180,10 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage_category = await model.forum_category(req, res, decoded);
 
-				for (let i = 0; i < forumPage_category.length; i++) {
-					for (let j = 0; j < forumPage_category[i].votes.length; j++) {
-						if(forumPage_category[i].votes[j].user_id == decoded.user_id){
-							forumPage_category[i].user.dataValues.itsliked = "yes";
+				for (let i = 0; i < forumPage_category.posts.length; i++) {
+					for (let j = 0; j < forumPage_category.posts[i].votes.length; j++) {
+						if(forumPage_category.posts[i].votes[j].user_id == decoded.user_id){
+							forumPage_category.posts[i].dataValues.user.dataValues.itsliked = "yes";
 							break;
 						}
 					}
@@ -190,10 +209,10 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage_search = await model.forum_search(req, res, decoded);
 
-				for (let i = 0; i < forumPage_search.length; i++) {
-					for (let j = 0; j < forumPage_search[i].votes.length; j++) {
-						if(forumPage_search[i].votes[j].user_id == decoded.user_id){
-							forumPage_search[i].user.dataValues.itsliked = "yes";
+				for (let i = 0; i < forumPage_search.posts.length; i++) {
+					for (let j = 0; j < forumPage_search.posts[i].votes.length; j++) {
+						if(forumPage_search.posts[i].votes[j].user_id == decoded.user_id){
+							forumPage_search.posts[i].dataValues.user.dataValues.itsliked = "yes";
 							break;
 						}
 					}
@@ -278,25 +297,6 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var newComment = await model.new_comment(req, res, decoded);
 				var returnValue = {'status': true, "values":newComment};
-				res.send(returnValue);			
-			} else {
-				console.log("User not loggedin.");
-				throw 'User not loggedin.';
-			}	
-		} catch (error) {
-			console.log(error);
-			var returnValue = {'status': false, "error": error};
-			res.send(returnValue);
-		}
-	},
-
-	addPhoto : async function(req, res){
-		try {
-			if (true) {
-				const token = req.headers.authorization.split(" ")[1]
-        		var decoded = jwt_decode(token);
-				var addPhoto = await model.add_photo(req, res, decoded);
-				var returnValue = {'status': true, "values":addPhoto};
 				res.send(returnValue);			
 			} else {
 				console.log("User not loggedin.");
@@ -409,6 +409,85 @@ const webcontroller = {
 		}
 	},
 
+	messagePage : async function(req, res){
+
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var messagePage = await model.message_page(req, res, decoded);
+				var returnValue = {'status': true, "values":messagePage};
+				res.send(returnValue);		
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	privMessagePage : async function(req, res){
+
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var privMessagePage = await model.priv_message_page(req, res, decoded);
+				var returnValue = {'status': true, "values":privMessagePage};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+	
+	newMessage : async function(req, res){
+
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var newMessage = await model.new_message(req, res, decoded);
+				var returnValue = {'status': true, "values":newMessage};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	notificationPage : async function(req, res){
+
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var notificationPage = await model.notification_page(req, res, decoded);
+				var returnValue = {'status': true, "values":notificationPage};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
 
 	//////////////////////////////////////////
 
