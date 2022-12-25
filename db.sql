@@ -95,7 +95,12 @@ SELECT
     UM.message_id,
     UM.sender_id , UM.receiver_id,
     UM.m_text, UM.creation_time,
-    user_1.name as sender_name, user_1.surname as sender_surname, user_1.photo as sender_photo
+	CASE WHEN UM.sender_id != 1 THEN CONCAT(user_1.name , " " , user_1.surname)
+		 WHEN UM.receiver_id != 1 THEN CONCAT(user_2.name ," ", user_2.surname)
+         ELSE NULL END as sender_username,
+	CASE WHEN UM.sender_id != 1 THEN user_1.photo
+		 WHEN UM.receiver_id != 1 THEN user_2.photo
+         ELSE NULL END as sender_photo
 
 FROM message AS UM
 
@@ -115,7 +120,7 @@ INNER JOIN
 			user_id, name, surname, photo
             FROM user
 	) user_1
-    ON UM.sender_id != 1
+    ON UM.sender_id = user_1.user_id
     
 INNER JOIN 
 	(
@@ -123,7 +128,7 @@ INNER JOIN
 			user_id, name, surname, photo
             FROM user
 	) user_2
-    ON UM.receiver_id != 1
+    ON UM.receiver_id = user_2.user_id
 
 WHERE UM.sender_id = 1 OR UM.receiver_id = 1
 ORDER BY UM.creation_time DESC;
