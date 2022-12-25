@@ -790,7 +790,7 @@ const model = {
 
         var off_set = 0;
         if(req.body.offset){
-            off_set = 10 * req.body.offset;
+            off_set = 15 * req.body.offset;
         }
 
         const privMessagePage = await message.findAll({  
@@ -818,12 +818,12 @@ const model = {
             group: ['message.message_id'],
             order: [['message_id', 'DESC']],
             offset: off_set, // set the offset according your use case
-            limit: 10  // limit the output
+            limit: 15  // limit the output
 
         });
 
         var returnVal = {
-            "offset_info": off_set / 10,
+            "offset_info": off_set / 15,
             "messages":privMessagePage
         }
 
