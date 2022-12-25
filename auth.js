@@ -7,17 +7,17 @@ module.exports = (req, res, next) => {
     } catch (error) {
         if (error.name === "TokenExpiredError") {
             return res.status(401).send({
-                message: 'Token Süren Dolmuştur',
+                message: 'Token is expired',
                 status: -1
             })
         } else if (error.name === "JsonWebTokenError") {
             return res.status(401).send({
-                message: 'Geçersiz Bir Token veya İmza İle Erişmeye Çalışma',
+                message: 'Invalid Token',
                 status: -1
             })
         } else {
             return res.status(401).send({
-                message: 'Yetkisiz Erişme Kardeşim',
+                message: 'Unauthorized Access',
                 status: -1
             })
         }

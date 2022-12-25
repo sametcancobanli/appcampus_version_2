@@ -245,13 +245,8 @@ const notification = db.define('notification', {
     post_id: {
         type: Sequelize.INTEGER,
     },
-    // comment_id: {
-    //     type: Sequelize.INTEGER,
-    //     defaultValue : 0,
-    // },
-    vote_id: {
-        type: Sequelize.INTEGER,
-        defaultValue : 0,
+    react_id: {
+        type: Sequelize.INTEGER
     },
     creation_time: {
         type: DataTypes.DATE,
@@ -654,7 +649,7 @@ const model = {
             receiver_id: req.body.user_id,
             type: 'like',
             post_id: req.body.post_id,
-            vote_id : likePost.dataValues.vote_id,
+            react_id : likePost.dataValues.vote_id,
         });
 
         var returnVal = {
@@ -697,8 +692,7 @@ const model = {
         const newComment = await comment.create({
             user_id: decoded.user_id,
             c_text: req.body.c_text,
-            post_id: req.body.post_id,
-            raw: true,
+            post_id: req.body.post_id
         });
 
         const newNotification = await notification.create({
@@ -706,8 +700,7 @@ const model = {
             receiver_id: req.body.user_id,
             type: 'comment',
             post_id: req.body.post_id,
-            comment_id : newComment.comment_id,
-            raw: true,
+            react_id : newComment.null,
         });
 
         var returnVal = {
@@ -788,7 +781,8 @@ const model = {
     },
 
     async message_page (req,res, decoded) {	
-        const messagePage = await db.query("SELECT UM.message_id, UM.sender_id , UM.receiver_id, UM.m_text, UM.creation_time, user_1.name as sender_name, user_1.surname as sender_surname, user_1.photo as sender_photo, user_2.name as receiver_name, user_2.surname as receiver_surname, user_2.photo as receiver_photo FROM message AS UM INNER JOIN( SELECT MAX(message_id) AS maxMessageID FROM message GROUP BY sender_id, receiver_id ) IUM ON UM.message_id = IUM.maxMessageID INNER JOIN  ( SELECT  user_id, name, surname,photo FROM user ) user_1 ON UM.sender_id = user_1.user_id  INNER JOIN ( SELECT  user_id, name, surname,photo FROM user ) user_2 ON UM.receiver_id = user_2.user_id WHERE UM.sender_id = '" + decoded.user_id + "' OR UM.receiver_id = '" + decoded.user_id + "' GROUP BY IF(UM.sender_id > UM.receiver_id, UM.sender_id,UM.receiver_id), IF(UM.receiver_id > UM.sender_id, UM.receiver_id,UM.sender_id) ORDER BY UM.creation_time DESC", { type: QueryTypes.SELECT });
+    // const messagePage = await db.query("SELECT UM.message_id, UM.sender_id , UM.receiver_id, UM.m_text, UM.creation_time, user_1.name as sender_name, user_1.surname as sender_surname, user_1.photo as sender_photo, user_2.name as receiver_name, user_2.surname as receiver_surname, user_2.photo as receiver_photo FROM message AS UM INNER JOIN( SELECT MAX(message_id) AS maxMessageID FROM message GROUP BY IF(sender_id > receiver_id, sender_id, receiver_id), IF(receiver_id > sender_id, receiver_id,sender_id) ) IUM ON UM.message_id = IUM.maxMessageID INNER JOIN  ( SELECT  user_id, name, surname,photo FROM user ) user_1 ON UM.sender_id = user_1.user_id  INNER JOIN ( SELECT  user_id, name, surname,photo FROM user ) user_2 ON UM.receiver_id = user_2.user_id WHERE UM.sender_id = '" + decoded.user_id + "' OR UM.receiver_id = '" + decoded.user_id + "' ORDER BY UM.creation_time DESC", { type: QueryTypes.SELECT });
+    const messagePage = await db.query("SELECT UM.message_id, UM.sender_id , UM.receiver_id, UM.m_text, UM.creation_time, CASE WHEN UM.sender_id != '" + decoded.user_id + "' THEN CONCAT(user_1.name , ' ' , user_1.surname) WHEN UM.receiver_id != '" + decoded.user_id + "' THEN CONCAT(user_2.name ,' ', user_2.surname) ELSE NULL END as sender_username 	CASE WHEN UM.sender_id != '" + decoded.user_id + "' THEN user_1.photo WHEN UM.receiver_id != '" + decoded.user_id + "' THEN user_2.photo ELSE NULL END as sender_photo FROM message AS UM INNER JOIN( SELECT MAX(message_id) AS maxMessageID FROM message GROUP BY IF(sender_id > receiver_id, sender_id, receiver_id), IF(receiver_id > sender_id, receiver_id, sender_id) ) IUM ON UM.message_id = IUM.maxMessageID INNER JOIN ( SELECT user_id, name, surname, photo FROM user ) user_1 ON UM.sender_id = user_1.user_id INNER JOIN  ( SELECT  user_id, name, surname, photo FROM user ) user_2 ON UM.receiver_id = user_2.user_id WHERE UM.sender_id = '" + decoded.user_id + "' OR UM.receiver_id = '" + decoded.user_id + "' ORDER BY UM.creation_time DESC;", { type: QueryTypes.SELECT });
         return messagePage;
     },
 
@@ -851,7 +845,7 @@ const model = {
 
     async notification_page (req,res, decoded) {	
 
-        const notificationPage = await db.query("SELECT UX.notification_id, UX.sender_id , UX.receiver_id, UX.type, UX.post_id, UX.creation_time, comments.c_text as text, user_1.name as sender_name, user_1.surname as sender_surname, RX.total_reaction as total_reaction FROM notification AS UX INNER JOIN (SELECT MAX(notification_id) AS maxNotificationID FROM notification GROUP BY post_id, type ) IUX ON UX.notification_id = IUX.maxNotificationID INNER JOIN (SELECT COUNT(post_id) AS total_reaction, post_id, type FROM notification GROUP BY post_id, type ) RX ON UX.post_id = RX.post_id INNER JOIN (SELECT user_id, name, surname FROM user) user_1 ON UX.sender_id = user_1.user_id  INNER JOIN  ( SELECT  c_text FROM comment ) comments ON RX.type = 'comment' WHERE UX.receiver_id = 4 GROUP BY notification_id ORDER BY UX.creation_time DESC", { type: QueryTypes.SELECT });
+        const notificationPage = await db.query("SELECT UX.notification_id, UX.sender_id , UX.receiver_id, UX.type, UX.post_id, UX.creation_time, posts.p_text as text, user_1.name as sender_name, user_1.surname as sender_surname, RX.total_reaction as total_reaction FROM notification AS UX INNER JOIN (SELECT MAX(notification_id) AS maxNotificationID FROM notification GROUP BY post_id, type ) IUX ON UX.notification_id = IUX.maxNotificationID INNER JOIN (SELECT COUNT(post_id) AS total_reaction, post_id, type FROM notification GROUP BY post_id, type ) RX ON UX.post_id = RX.post_id INNER JOIN (SELECT user_id, name, surname FROM user) user_1 ON UX.sender_id = user_1.user_id  INNER JOIN  ( SELECT  p_text FROM post ) posts WHERE UX.receiver_id = '" + decoded.user_id + "' GROUP BY notification_id ORDER BY UX.creation_time DESC", { type: QueryTypes.SELECT });
         return notificationPage;
     },
 

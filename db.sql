@@ -1,8 +1,9 @@
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'penguen123';;
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'penguen123';
 
 SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
 
 SET FOREIGN_KEY_CHECKS=0;
+SET FOREIGN_KEY_CHECKS=1;
 
 CREATE DATABASE IF NOT EXISTS `uni_media` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE `uni_media`;
@@ -20,14 +21,11 @@ CREATE TABLE notification (
     receiver_id INT NOT NULL,
     type VARCHAR(20),
     post_id INT NOT NULL,
-    comment_id INT DEFAULT(0),
-    vote_id INT DEFAULT(0),
+    react_id INT,
     creation_time TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES user(user_id) ON DELETE CASCADE,
     FOREIGN KEY (receiver_id) REFERENCES user(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (post_id) REFERENCES post(post_id),
-    FOREIGN KEY (comment_id) REFERENCES comment(comment_id),
-	FOREIGN KEY (vote_id) REFERENCES vote(vote_id)
+    FOREIGN KEY (post_id) REFERENCES post(post_id)
 );
 
 CREATE TABLE message (
@@ -93,13 +91,17 @@ CREATE TABLE vote (
 );
 
 
-
 SELECT
     UM.message_id,
     UM.sender_id , UM.receiver_id,
     UM.m_text, UM.creation_time,
-	user_1.name as sender_name, user_1.surname as sender_surname, user_1.photo as sender_photo,
-    user_2.name as receiver_name, user_2.surname as receiver_surname, user_2.photo as receiver_photo
+	CASE WHEN UM.sender_id != 1 THEN CONCAT(user_1.name , " " , user_1.surname)
+		 WHEN UM.receiver_id != 1 THEN CONCAT(user_2.name ," ", user_2.surname)
+         ELSE NULL END as sender_username,
+	CASE WHEN UM.sender_id != 1 THEN user_1.photo
+		 WHEN UM.receiver_id != 1 THEN user_2.photo
+         ELSE NULL END as sender_photo
+
 FROM message AS UM
 
 INNER JOIN
@@ -107,7 +109,8 @@ INNER JOIN
         SELECT
             MAX(message_id) AS maxMessageID
         FROM message
-        GROUP BY sender_id, receiver_id
+        GROUP BY IF(sender_id > receiver_id, sender_id, receiver_id),
+                 IF(receiver_id > sender_id, receiver_id, sender_id)
     ) IUM
     ON UM.message_id = IUM.maxMessageID
     
@@ -117,7 +120,7 @@ INNER JOIN
 			user_id, name, surname, photo
             FROM user
 	) user_1
-    ON UM.sender_id = user_1.user_id 
+    ON UM.sender_id = user_1.user_id
     
 INNER JOIN 
 	(
@@ -125,12 +128,9 @@ INNER JOIN
 			user_id, name, surname, photo
             FROM user
 	) user_2
-    ON UM.receiver_id = user_2.user_id 
+    ON UM.receiver_id = user_2.user_id
 
-
-WHERE UM.sender_id = 4 OR UM.receiver_id = 4
-GROUP BY IF(UM.sender_id > UM.receiver_id, UM.sender_id,UM.receiver_id),
-         IF(UM.receiver_id > UM.sender_id, UM.receiver_id,UM.sender_id)
+WHERE UM.sender_id = 1 OR UM.receiver_id = 1
 ORDER BY UM.creation_time DESC;
 
 ------------------------------------------------------------
@@ -178,7 +178,16 @@ INNER JOIN
 	) comments
 	ON RX.type = 'comment'
 
-WHERE UX.receiver_id = 4
+WHERE UX.receiver_id = 3
 GROUP BY notification_id
-ORDER BY UX.creation_time DESC
+ORDER BY UX.creation_time DESC;
+
+
+INSERT INTO `uni_media`.`user` (`user_id`, `mail`, `password`, `name`, `surname`, `school`, `department`, `entry_year`, `about`, `isConfirmed`, `creation_time`) VALUES ('1', 'mail1', '123456', 'samet', 'çoban', 'itü', 'computer', '2017', 'GM1', '1', '2022-12-25 14:26:18');
+INSERT INTO `uni_media`.`user` (`user_id`, `mail`, `password`, `name`, `surname`, `school`, `department`, `entry_year`, `about`, `isConfirmed`, `creation_time`) VALUES ('2', 'mail2', '123456', 'yiğit', 'yilmaz', 'itü', 'computer', '2017', 'GM2', '1', '2022-12-25 14:26:19');
+INSERT INTO `uni_media`.`user` (`user_id`, `mail`, `password`, `name`, `surname`, `school`, `department`, `entry_year`, `about`, `isConfirmed`, `creation_time`) VALUES ('3', 'mail3', '123456', 'enes', 'şaşmaz', 'itü', 'computer', '2017', 'GM3', '1', '2022-12-25 14:26:20');
+
+INSERT INTO `uni_media`.`post` (`post_id`, `user_id`, `category_id`, `p_text`, `p_vote`, `creation_time`) VALUES ('1', '1', '1', 'post1', '0', '2022-12-25 14:29:17');
+INSERT INTO `uni_media`.`post` (`post_id`, `user_id`, `category_id`, `p_text`, `p_vote`, `creation_time`) VALUES ('2', '2', '1', 'post2', '0', '2022-12-25 14:29:18');
+INSERT INTO `uni_media`.`post` (`post_id`, `user_id`, `category_id`, `p_text`, `p_vote`, `creation_time`) VALUES ('3', '3', '1', 'post3', '0', '2022-12-25 14:29:19');
 
