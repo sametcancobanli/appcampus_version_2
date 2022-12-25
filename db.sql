@@ -91,13 +91,12 @@ CREATE TABLE vote (
 );
 
 
-
 SELECT
     UM.message_id,
     UM.sender_id , UM.receiver_id,
     UM.m_text, UM.creation_time,
-	user_1.name as sender_name, user_1.surname as sender_surname, user_1.photo as sender_photo,
-    user_2.name as receiver_name, user_2.surname as receiver_surname, user_2.photo as receiver_photo
+    user_1.name as sender_name, user_1.surname as sender_surname, user_1.photo as sender_photo
+
 FROM message AS UM
 
 INNER JOIN
@@ -116,7 +115,7 @@ INNER JOIN
 			user_id, name, surname, photo
             FROM user
 	) user_1
-    ON UM.sender_id = user_1.user_id 
+    ON UM.sender_id != 1
     
 INNER JOIN 
 	(
@@ -124,10 +123,9 @@ INNER JOIN
 			user_id, name, surname, photo
             FROM user
 	) user_2
-    ON UM.receiver_id = user_2.user_id 
+    ON UM.receiver_id != 1
 
-
-WHERE UM.sender_id = 4 OR UM.receiver_id = 4
+WHERE UM.sender_id = 1 OR UM.receiver_id = 1
 ORDER BY UM.creation_time DESC;
 
 ------------------------------------------------------------
@@ -175,9 +173,9 @@ INNER JOIN
 	) comments
 	ON RX.type = 'comment'
 
-WHERE UX.receiver_id = 1
+WHERE UX.receiver_id = 3
 GROUP BY notification_id
-ORDER BY UX.creation_time DESC
+ORDER BY UX.creation_time DESC;
 
 
 INSERT INTO `uni_media`.`user` (`user_id`, `mail`, `password`, `name`, `surname`, `school`, `department`, `entry_year`, `about`, `isConfirmed`, `creation_time`) VALUES ('1', 'mail1', '123456', 'samet', 'çoban', 'itü', 'computer', '2017', 'GM1', '1', '2022-12-25 14:26:18');
