@@ -245,13 +245,8 @@ const notification = db.define('notification', {
     post_id: {
         type: Sequelize.INTEGER,
     },
-    // comment_id: {
-    //     type: Sequelize.INTEGER,
-    //     defaultValue : 0,
-    // },
-    vote_id: {
-        type: Sequelize.INTEGER,
-        defaultValue : 0,
+    react_id: {
+        type: Sequelize.INTEGER
     },
     creation_time: {
         type: DataTypes.DATE,
@@ -654,7 +649,7 @@ const model = {
             receiver_id: req.body.user_id,
             type: 'like',
             post_id: req.body.post_id,
-            vote_id : likePost.dataValues.vote_id,
+            react_id : likePost.dataValues.vote_id,
         });
 
         var returnVal = {
@@ -697,8 +692,7 @@ const model = {
         const newComment = await comment.create({
             user_id: decoded.user_id,
             c_text: req.body.c_text,
-            post_id: req.body.post_id,
-            raw: true,
+            post_id: req.body.post_id
         });
 
         const newNotification = await notification.create({
@@ -706,8 +700,7 @@ const model = {
             receiver_id: req.body.user_id,
             type: 'comment',
             post_id: req.body.post_id,
-            comment_id : newComment.comment_id,
-            raw: true,
+            react_id : newComment.null,
         });
 
         var returnVal = {
