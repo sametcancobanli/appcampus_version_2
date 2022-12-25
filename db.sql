@@ -175,7 +175,7 @@ INNER JOIN
 	) comments
 	ON RX.type = 'comment'
 
-WHERE UX.receiver_id = 4
+WHERE UX.receiver_id = 1
 GROUP BY notification_id
 ORDER BY UX.creation_time DESC
 
