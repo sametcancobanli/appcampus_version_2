@@ -21,14 +21,11 @@ CREATE TABLE notification (
     receiver_id INT NOT NULL,
     type VARCHAR(20),
     post_id INT NOT NULL,
-    comment_id INT DEFAULT(0),
-    vote_id INT DEFAULT(0),
+    react_id INT,
     creation_time TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES user(user_id) ON DELETE CASCADE,
     FOREIGN KEY (receiver_id) REFERENCES user(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (post_id) REFERENCES post(post_id),
-    FOREIGN KEY (comment_id) REFERENCES comment(comment_id),
-	FOREIGN KEY (vote_id) REFERENCES vote(vote_id)
+    FOREIGN KEY (post_id) REFERENCES post(post_id)
 );
 
 CREATE TABLE message (
