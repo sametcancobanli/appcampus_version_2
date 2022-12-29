@@ -440,13 +440,8 @@ const model = {
                 {
                     model: vote,
                     separate: true,
-                    attributes: ['user_id', 'vote_id'],
-                    include: [
-                        {
-                            model: user,
-                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-                        },
-                    ],
+                    attributes : [['user_id', 'itsliked']],
+                    where : { user_id : decoded.user_id }
                 },
             ],
             
@@ -495,13 +490,8 @@ const model = {
                 {
                     model: vote,
                     separate: true,
-                    attributes: ['user_id', 'vote_id'],
-                    include: [
-                        {
-                            model: user,
-                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-                        },
-                    ],
+                    attributes : [['user_id', 'itsliked']],
+                    where : { user_id : decoded.user_id }
                 },
             ],
             
@@ -551,13 +541,8 @@ const model = {
                 {
                     model: vote,
                     separate: true,
-                    attributes: ['user_id', 'vote_id'],
-                    include: [
-                        {
-                            model: user,
-                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-                        },
-                    ],
+                    attributes : [['user_id', 'itsliked']],
+                    where : { user_id : decoded.user_id }
                 },
             ],
             

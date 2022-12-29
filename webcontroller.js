@@ -151,14 +151,9 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage = await model.forum(req, res, decoded);
 
-				for (let i = 0; i < forumPage.posts.length; i++) {
-					for (let j = 0; j < forumPage.posts[i].votes.length; j++) {
-						if(forumPage.posts[i].votes[j].user_id == decoded.user_id){
-							forumPage.posts[i].dataValues.user.dataValues.itsliked = "yes";
-							break;
-						}
-					}
-				}
+				if(forumPage.posts[0].dataValues.votes[0].dataValues.itsliked > 0 ){
+					forumPage.posts[0].dataValues.votes[0].dataValues.itsliked = "yes";
+				} 
 
 				var returnValue = {'status': true, "values":forumPage};
 				res.send(returnValue);		
@@ -180,14 +175,9 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage_category = await model.forum_category(req, res, decoded);
 
-				for (let i = 0; i < forumPage_category.posts.length; i++) {
-					for (let j = 0; j < forumPage_category.posts[i].votes.length; j++) {
-						if(forumPage_category.posts[i].votes[j].user_id == decoded.user_id){
-							forumPage_category.posts[i].dataValues.user.dataValues.itsliked = "yes";
-							break;
-						}
-					}
-				}
+				if(forumPage_category.posts[0].dataValues.votes[0].dataValues.itsliked > 0 ){
+					forumPage_category.posts[0].dataValues.votes[0].dataValues.itsliked = "yes";
+				} 
 
 				var returnValue = {'status': true, "values":forumPage_category};
 				res.send(returnValue);			
@@ -209,14 +199,9 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage_search = await model.forum_search(req, res, decoded);
 
-				for (let i = 0; i < forumPage_search.posts.length; i++) {
-					for (let j = 0; j < forumPage_search.posts[i].votes.length; j++) {
-						if(forumPage_search.posts[i].votes[j].user_id == decoded.user_id){
-							forumPage_search.posts[i].dataValues.user.dataValues.itsliked = "yes";
-							break;
-						}
-					}
-				}
+				if(forumPage_search.posts[0].dataValues.votes[0].dataValues.itsliked > 0 ){
+					forumPage_search.posts[0].dataValues.votes[0].dataValues.itsliked = "yes";
+				} 
 
 				var returnValue = {'status': true, "values":forumPage_search};
 				res.send(returnValue);			
