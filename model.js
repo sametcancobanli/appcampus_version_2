@@ -629,6 +629,17 @@ const model = {
             post_id: req.body.post_id,
         });   
 
+        const updatePost = await post.update(
+
+            {
+                p_vote: sequelize.literal('p_vote + 1'),
+
+            },            
+            {where: { 
+                post_id: req.body.post_id,
+            }},
+        );
+
         const newNotification = await notification.create({
             sender_id: decoded.user_id,
             receiver_id: req.body.user_id,
@@ -639,6 +650,7 @@ const model = {
 
         var returnVal = {
             "newLike":likePost,
+            "newPost":updatePost,
             "newNotification":newNotification
         }
 
