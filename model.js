@@ -560,6 +560,72 @@ const model = {
         return returnVal;
     },
 
+    async comments_of_post (req,res, decoded) {	
+
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = 5 * req.body.offset;
+        }
+
+        const comments_of_post = await comment.findAll({  
+            where: {
+                post_id: req.body.post_id
+            },
+            include: [
+                {
+                    model : user,
+                    attributes : ['photo',[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+
+                },
+            ],
+            
+            // group: ['post.post_id'],
+            order: [['comment_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 5  // limit the output
+        });
+
+        var returnVal = {
+            "offset_info": off_set / 5,
+            "comments":comments_of_post
+        }
+
+        return returnVal;
+    },
+
+    async likes_of_post (req,res, decoded) {	
+
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = 5 * req.body.offset;
+        }
+
+        const likes_of_post = await vote.findAll({  
+            where: {
+                post_id: req.body.post_id
+            },
+            include: [
+                {
+                    model : user,
+                    attributes : ['photo',[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+
+                },
+            ],
+            
+            // group: ['post.post_id'],
+            order: [['vote_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 5  // limit the output
+        });
+
+        var returnVal = {
+            "offset_info": off_set / 5,
+            "likes":likes_of_post
+        }
+
+        return returnVal;
+    },
+
     async forum_profile (req,res, decoded) {
 
         var off_set = 0;

@@ -216,6 +216,46 @@ const webcontroller = {
 		}
 	},
 
+	commentsofPost : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var comments_of_Post = await model.comments_of_post(req, res, decoded);
+
+				var returnValue = {'status': true, "values":comments_of_Post};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
+	likesofPost : async function(req, res){
+		try {
+			if (true) {
+				const token = req.headers.authorization.split(" ")[1]
+        		var decoded = jwt_decode(token);
+				var likes_of_Post = await model.likes_of_post(req, res, decoded);
+
+				var returnValue = {'status': true, "values": likes_of_Post};
+				res.send(returnValue);			
+			} else {
+				console.log("User not loggedin.");
+				throw 'User not loggedin.';
+			}	
+		} catch (error) {
+			console.log(error);
+			var returnValue = {'status': false, "error": error};
+			res.send(returnValue);
+		}
+	},
+
 	likePost : async function(req, res){
 		try {
 			if (true) {
