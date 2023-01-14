@@ -733,7 +733,21 @@ const model = {
             }
         });
 
-        return dislikePost;
+        const deleteNotification = await notification.destroy({
+
+            where:{
+                sender_id: decoded.user_id,
+                post_id: req.body.post_id,
+                type: "like"
+            }
+        });
+
+        var returnVal = {
+            "deleteNotification": deleteNotification,
+            "dislikePost":dislikePost
+        }
+
+        return returnVal;
     },
 
     async new_post (req,res,decoded) {	
