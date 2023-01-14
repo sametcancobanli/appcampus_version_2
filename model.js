@@ -733,6 +733,17 @@ const model = {
             }
         });
 
+        const updatePost = await post.update(
+
+            {
+                p_vote: sequelize.literal('p_vote - 1'),
+
+            },            
+            {where: { 
+                post_id: req.body.post_id,
+            }},
+        );
+
         const deleteNotification = await notification.destroy({
 
             where:{

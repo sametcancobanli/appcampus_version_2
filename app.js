@@ -70,7 +70,7 @@ app.post("/webservice/alllike", checkJwt, webcontroller.allLike);
 app.post("/webservice/countcategory", checkJwt , webcontroller.countCategory);
 
 ///////////// setting port /////////////
-app.listen(3000, function(){
+app.listen(3001, function(){
   console.log("Listening port number : 3000")
 });
 ////////////////////////////////////////
