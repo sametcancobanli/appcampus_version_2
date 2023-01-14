@@ -151,10 +151,6 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage = await model.forum(req, res, decoded);
 
-				if(forumPage.posts[0].dataValues.votes[0].dataValues.itsliked > 0 ){
-					forumPage.posts[0].dataValues.votes[0].dataValues.itsliked = "yes";
-				} 
-
 				var returnValue = {'status': true, "values":forumPage};
 				res.send(returnValue);		
 			} else {
@@ -175,10 +171,6 @@ const webcontroller = {
         		var decoded = jwt_decode(token);
 				var forumPage_category = await model.forum_category(req, res, decoded);
 
-				if(forumPage_category.posts[0].dataValues.votes[0].dataValues.itsliked > 0 ){
-					forumPage_category.posts[0].dataValues.votes[0].dataValues.itsliked = "yes";
-				} 
-
 				var returnValue = {'status': true, "values":forumPage_category};
 				res.send(returnValue);			
 			} else {
@@ -198,10 +190,6 @@ const webcontroller = {
 				const token = req.headers.authorization.split(" ")[1]
         		var decoded = jwt_decode(token);
 				var forumPage_search = await model.forum_search(req, res, decoded);
-
-				if(forumPage_search.posts[0].dataValues.votes[0].dataValues.itsliked > 0 ){
-					forumPage_search.posts[0].dataValues.votes[0].dataValues.itsliked = "yes";
-				} 
 
 				var returnValue = {'status': true, "values":forumPage_search};
 				res.send(returnValue);			
