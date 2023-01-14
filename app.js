@@ -40,6 +40,9 @@ app.post("/webservice/forumpage", checkJwt, webcontroller.forumPage);
 app.post("/webservice/forumcategory", checkJwt, webcontroller.forumCategory);
 app.post("/webservice/forumsearch", checkJwt, webcontroller.forumSearch);
 
+app.post("/webservice/commentsofpost", checkJwt, webcontroller.commentsofPost);
+app.post("/webservice/likesofpost", checkJwt, webcontroller.likesofPost);
+
 app.post("/webservice/categories", checkJwt, webcontroller.categories);
 app.post("/webservice/likepost", checkJwt, webcontroller.likePost);
 app.post("/webservice/dislikepost", checkJwt, webcontroller.dislikePost);

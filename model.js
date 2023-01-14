@@ -440,13 +440,8 @@ const model = {
                 {
                     model: vote,
                     separate: true,
-                    attributes: ['user_id', 'vote_id'],
-                    include: [
-                        {
-                            model: user,
-                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-                        },
-                    ],
+                    attributes : [['user_id', 'itsliked']],
+                    where : { user_id : decoded.user_id }
                 },
             ],
             
@@ -495,13 +490,8 @@ const model = {
                 {
                     model: vote,
                     separate: true,
-                    attributes: ['user_id', 'vote_id'],
-                    include: [
-                        {
-                            model: user,
-                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-                        },
-                    ],
+                    attributes : [['user_id', 'itsliked']],
+                    where : { user_id : decoded.user_id }
                 },
             ],
             
@@ -551,13 +541,8 @@ const model = {
                 {
                     model: vote,
                     separate: true,
-                    attributes: ['user_id', 'vote_id'],
-                    include: [
-                        {
-                            model: user,
-                            attributes : [[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
-                        },
-                    ],
+                    attributes : [['user_id', 'itsliked']],
+                    where : { user_id : decoded.user_id }
                 },
             ],
             
@@ -570,6 +555,72 @@ const model = {
         var returnVal = {
             "offset_info": off_set / 5,
             "posts":forumPage_search
+        }
+
+        return returnVal;
+    },
+
+    async comments_of_post (req,res, decoded) {	
+
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = 5 * req.body.offset;
+        }
+
+        const comments_of_post = await comment.findAll({  
+            where: {
+                post_id: req.body.post_id
+            },
+            include: [
+                {
+                    model : user,
+                    attributes : ['photo',[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+
+                },
+            ],
+            
+            // group: ['post.post_id'],
+            order: [['comment_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 5  // limit the output
+        });
+
+        var returnVal = {
+            "offset_info": off_set / 5,
+            "comments":comments_of_post
+        }
+
+        return returnVal;
+    },
+
+    async likes_of_post (req,res, decoded) {	
+
+        var off_set = 0;
+        if(req.body.offset){
+            off_set = 5 * req.body.offset;
+        }
+
+        const likes_of_post = await vote.findAll({  
+            where: {
+                post_id: req.body.post_id
+            },
+            include: [
+                {
+                    model : user,
+                    attributes : ['photo',[Sequelize.fn("concat", Sequelize.col('user.name'), " ", Sequelize.col('user.surname')), 'fullname']],
+
+                },
+            ],
+            
+            // group: ['post.post_id'],
+            order: [['vote_id', 'DESC']],
+            offset: off_set, // set the offset according your use case
+            limit: 5  // limit the output
+        });
+
+        var returnVal = {
+            "offset_info": off_set / 5,
+            "likes":likes_of_post
         }
 
         return returnVal;
@@ -644,6 +695,17 @@ const model = {
             post_id: req.body.post_id,
         });   
 
+        const updatePost = await post.update(
+
+            {
+                p_vote: sequelize.literal('p_vote + 1'),
+
+            },            
+            {where: { 
+                post_id: req.body.post_id,
+            }},
+        );
+
         const newNotification = await notification.create({
             sender_id: decoded.user_id,
             receiver_id: req.body.user_id,
@@ -654,6 +716,7 @@ const model = {
 
         var returnVal = {
             "newLike":likePost,
+            "newPost":updatePost,
             "newNotification":newNotification
         }
 
@@ -670,7 +733,21 @@ const model = {
             }
         });
 
-        return dislikePost;
+        const deleteNotification = await notification.destroy({
+
+            where:{
+                sender_id: decoded.user_id,
+                post_id: req.body.post_id,
+                type: "like"
+            }
+        });
+
+        var returnVal = {
+            "deleteNotification": deleteNotification,
+            "dislikePost":dislikePost
+        }
+
+        return returnVal;
     },
 
     async new_post (req,res,decoded) {	
@@ -779,9 +856,8 @@ const model = {
 
         return deleteComment;
     },
-//safasfsafasfsafsafasfsafasfsafas
+
     async message_page (req,res, decoded) {	
-    // const messagePage = await db.query("SELECT UM.message_id, UM.sender_id , UM.receiver_id, UM.m_text, UM.creation_time, user_1.name as sender_name, user_1.surname as sender_surname, user_1.photo as sender_photo, user_2.name as receiver_name, user_2.surname as receiver_surname, user_2.photo as receiver_photo FROM message AS UM INNER JOIN( SELECT MAX(message_id) AS maxMessageID FROM message GROUP BY IF(sender_id > receiver_id, sender_id, receiver_id), IF(receiver_id > sender_id, receiver_id,sender_id) ) IUM ON UM.message_id = IUM.maxMessageID INNER JOIN  ( SELECT  user_id, name, surname,photo FROM user ) user_1 ON UM.sender_id = user_1.user_id  INNER JOIN ( SELECT  user_id, name, surname,photo FROM user ) user_2 ON UM.receiver_id = user_2.user_id WHERE UM.sender_id = '" + decoded.user_id + "' OR UM.receiver_id = '" + decoded.user_id + "' ORDER BY UM.creation_time DESC", { type: QueryTypes.SELECT });
         const messagePage = await db.query("SELECT UM.message_id, UM.sender_id , UM.receiver_id, UM.m_text, UM.creation_time, CASE WHEN UM.sender_id != '" + decoded.user_id + "' THEN CONCAT(user_1.name , ' ' , user_1.surname) WHEN UM.receiver_id != '" + decoded.user_id + "' THEN CONCAT(user_2.name ,' ', user_2.surname) ELSE NULL END as sender_username, CASE WHEN UM.sender_id != '" + decoded.user_id + "' THEN user_1.photo WHEN UM.receiver_id != '" + decoded.user_id + "' THEN user_2.photo ELSE NULL END as sender_photo FROM message AS UM INNER JOIN( SELECT MAX(message_id) AS maxMessageID FROM message GROUP BY IF(sender_id > receiver_id, sender_id, receiver_id), IF(receiver_id > sender_id, receiver_id, sender_id) ) IUM ON UM.message_id = IUM.maxMessageID INNER JOIN ( SELECT user_id, name, surname, photo FROM user ) user_1 ON UM.sender_id = user_1.user_id INNER JOIN  ( SELECT  user_id, name, surname, photo FROM user ) user_2 ON UM.receiver_id = user_2.user_id WHERE UM.sender_id = '" + decoded.user_id + "' OR UM.receiver_id = '" + decoded.user_id + "' ORDER BY UM.creation_time DESC;", { type: QueryTypes.SELECT });
         return messagePage;
     },
